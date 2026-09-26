@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Animora Studio Library"
+description = "A premium learning and resource platform for 2D animation, 3D animation, and visual effects."
+version = "1.0.0"
+id = "artifacts/animora-studio-library"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19122
+
+[services.development]
+run = "pnpm --filter @workspace/animora-studio-library run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/animora-studio-library", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/animora-studio-library/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19122"
+BASE_PATH = "/"
