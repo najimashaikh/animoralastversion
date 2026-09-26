@@ -3,16 +3,11 @@ import {
   ArrowDownRight,
   ArrowRight,
   Check,
-  ChevronDown,
-  Clapperboard,
-  ExternalLink,
   Film,
   Layers3,
   Menu,
   MoveUpRight,
   Play,
-  Plus,
-  Search,
   Sparkles,
   X,
 } from 'lucide-react';
@@ -69,16 +64,107 @@ const courses = [
 }));
 
 const tutorials = [
-  { id: 'tut-1', title: 'Making a walk cycle read', category: '2D', time: '14 MIN', color: 'bg-[#d7d4c8]' },
-  { id: 'tut-2', title: 'A cleaner camera track', category: 'VFX', time: '09 MIN', color: 'bg-[#c3e12c]' },
-  { id: 'tut-3', title: 'Light before texture', category: '3D', time: '18 MIN', color: 'bg-[#e2e5a9]' },
-  { id: 'tut-4', title: 'Designing a useful animatic', category: '2D', time: '11 MIN', color: 'bg-[#c9d1c0]' },
+  {
+    id: 'tut-walk-cycle',
+    title: 'Walk Cycle: Making Motion Read',
+    description: 'Build a readable walk cycle by finding the contact, passing and weight-bearing poses first.',
+    category: '2D',
+    duration: '14 MIN',
+    videoUrl: 'https://www.youtube.com/watch?v=n_11DSOBmLc',
+    thumbnail: '/animora-art.jpg',
+    color: 'bg-[#d7d4c8]',
+  },
+  {
+    id: 'tut-timing-spacing',
+    title: 'Timing and Spacing in Practice',
+    description: 'A focused study in how spacing choices change the energy, weight and intent of a shot.',
+    category: '2D',
+    duration: '11 MIN',
+    videoUrl: '',
+    thumbnail: '/animora-hero.jpg',
+    color: 'bg-[#c9d1c0]',
+  },
+  {
+    id: 'tut-3d-modeling',
+    title: '3D Modeling Tutorial',
+    description: 'Start with clean forms and a simple blockout, then build a model that is ready for detail.',
+    category: '3D',
+    duration: '22 MIN',
+    videoUrl: 'https://www.youtube.com/watch?v=1kSVb-VEhNc',
+    thumbnail: '/animora-hero.jpg',
+    color: 'bg-[#e2e5a9]',
+  },
+  {
+    id: 'tut-light-texture',
+    title: 'Light Before Texture',
+    description: 'Use the key, fill and shadow relationship to make a scene feel intentional before adding surface detail.',
+    category: '3D',
+    duration: '18 MIN',
+    videoUrl: '',
+    thumbnail: '/animora-art.jpg',
+    color: 'bg-[#c3e12c]',
+  },
+  {
+    id: 'tut-green-screen',
+    title: 'Green Screen: A Cleaner Composite',
+    description: 'Key a green screen, match the light and integrate the subject into a believable plate.',
+    category: 'VFX',
+    duration: '16 MIN',
+    videoUrl: 'https://www.youtube.com/watch?v=5mf6hP9Cnp8',
+    thumbnail: '/animora-hero.jpg',
+    color: 'bg-[#c3e12c]',
+  },
+  {
+    id: 'tut-motion-tracking',
+    title: 'Motion Tracking Basics',
+    description: 'Track the world around a moving subject so digital elements inherit the same sense of place.',
+    category: 'VFX',
+    duration: '09 MIN',
+    videoUrl: '',
+    thumbnail: '/animora-art.jpg',
+    color: 'bg-[#d7d4c8]',
+  },
+  {
+    id: 'tut-color-grade',
+    title: 'Color Grading the Final Shot',
+    description: 'Bring a finished image together by shaping contrast, color relationships and the final feeling.',
+    category: 'VFX',
+    duration: '13 MIN',
+    videoUrl: '',
+    thumbnail: '/animora-hero.jpg',
+    color: 'bg-[#c9d1c0]',
+  },
 ];
 
-const problems = [
-  ['My animation feels floaty', 'Start with the contact. Clarify where the weight lands, then let the spacing between poses do the talking.'],
-  ['My render feels flat', 'Separate the image into a key, a fill and a reason for the shadows. Contrast is a storytelling tool before it is a technical one.'],
-  ['My composite looks pasted on', 'Track the world, not just the subject. Match grain, light direction and the small imperfections that make a plate feel lived-in.'],
+type Problem = {
+  id: string;
+  category: '2D' | '3D' | 'VFX';
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  title: string;
+  problem: string;
+  task: string;
+  hint: string;
+  solution: string;
+  relatedCourse: string;
+  relatedTutorial: string;
+};
+
+const problems: Problem[] = [
+  { id: 'problem-character-movement', category: '2D', difficulty: 'Beginner', title: 'Character Movement', problem: 'Your character moves, but the action has no clear direction or weight.', task: 'Create a short movement with a readable beginning, change of direction and finish.', hint: 'Thumbnail the strongest silhouette before refining any drawing.', solution: 'Anchor the motion with a clear line of action, then use extreme and breakdown poses to keep the change visible.', relatedCourse: 'Principles of Animation', relatedTutorial: 'Timing and Spacing in Practice' },
+  { id: 'problem-walk-cycle', category: '2D', difficulty: 'Beginner', title: 'Walk Cycle', problem: 'The walk feels like sliding instead of a character carrying weight through space.', task: 'Animate a looping walk with clear contact, passing and push-off poses.', hint: 'Check the feet first: the contact foot should stay planted while the body travels over it.', solution: 'Use a consistent contact distance, offset the hips and shoulders, and make the spacing widen as the body pushes into the next step.', relatedCourse: 'Character Animation', relatedTutorial: 'Walk Cycle: Making Motion Read' },
+  { id: 'problem-timing-spacing', category: '2D', difficulty: 'Intermediate', title: 'Timing and Spacing', problem: 'The poses are correct, but the action still feels flat and evenly paced.', task: 'Revise a short shot so the viewer can feel acceleration, impact and settle.', hint: 'Do not add frames everywhere. Remove or cluster them to change the rhythm.', solution: 'Use wider spacing for speed, tighter spacing for held moments and a deliberate contrast at the story beat that matters most.', relatedCourse: 'Principles of Animation', relatedTutorial: 'Timing and Spacing in Practice' },
+  { id: 'problem-lip-sync', category: '2D', difficulty: 'Advanced', title: 'Lip Sync', problem: 'The mouth shapes match the audio, but the dialogue does not feel connected to the character.', task: 'Animate a short line with clear phonemes and a believable performance.', hint: 'Listen for the thought behind the words, not only the individual sounds.', solution: 'Place the important vowel shapes on stressed syllables, add small anticipation and settle, and let the eyes and head support the line.', relatedCourse: 'Character Animation', relatedTutorial: 'Timing and Spacing in Practice' },
+  { id: 'problem-keyframe', category: '2D', difficulty: 'Intermediate', title: 'Keyframe', problem: 'The key poses communicate the idea, but the in-between motion loses the intent.', task: 'Create a clean keyframe pass for a single expressive action.', hint: 'If the silhouette does not read in a thumbnail, more in-betweens will not fix it.', solution: 'Clarify the line of action and hierarchy in the keys first, then choose breakdowns that preserve the force of the movement.', relatedCourse: 'Fundamentals of 2D Animation', relatedTutorial: 'Timing and Spacing in Practice' },
+  { id: 'problem-modeling', category: '3D', difficulty: 'Beginner', title: '3D Modeling', problem: 'The model has surface detail, but the primary forms do not feel convincing.', task: 'Block out a simple prop using clean proportions and readable planes.', hint: 'Judge the silhouette from a distance before adding bevels or texture.', solution: 'Work from large to small, keep the topology supporting the form, and check the object under a neutral light before polishing.', relatedCourse: '3D Modeling Fundamentals', relatedTutorial: '3D Modeling Tutorial' },
+  { id: 'problem-rigging', category: '3D', difficulty: 'Intermediate', title: 'Rigging', problem: 'The controls technically work, but the character bends in ways that break the form.', task: 'Build a simple rig with stable deformation through one clear pose change.', hint: 'Test extreme poses early instead of waiting until the rig feels finished.', solution: 'Place joints based on the intended deformation, use clean weight ranges, and add only the controls that make the motion easier to direct.', relatedCourse: 'Character Rigging', relatedTutorial: '3D Modeling Fundamentals' },
+  { id: 'problem-character-animation', category: '3D', difficulty: 'Advanced', title: 'Character Animation', problem: 'The character hits the key poses, but the performance feels mechanical.', task: 'Animate a short acting beat with a clear intention and change.', hint: 'Give the body a thought to react to before the limbs begin to move.', solution: 'Lead with the idea, offset the body parts, and use asymmetry and holds to create a performance rather than a sequence of controls.', relatedCourse: '3D Character Animation', relatedTutorial: 'Walk Cycle: Making Motion Read' },
+  { id: 'problem-lighting', category: '3D', difficulty: 'Intermediate', title: 'Lighting', problem: 'The scene is technically bright, but the focal point and depth are unclear.', task: 'Light a shot with a clear subject hierarchy and readable separation.', hint: 'Start with one motivated key light before adding fill or rim light.', solution: 'Use the key to establish direction, preserve shadow shape, then add restrained fill so the eye lands where the story needs it.', relatedCourse: 'Lighting and Rendering', relatedTutorial: 'Light Before Texture' },
+  { id: 'problem-rendering', category: '3D', difficulty: 'Advanced', title: 'Rendering', problem: 'The final render looks different from the viewport and loses the intended mood.', task: 'Prepare a consistent render with correct color management and a deliberate finish.', hint: 'Compare the same frame, exposure and color space before changing the lighting.', solution: 'Lock the camera and render settings, preview at a small resolution, and make one controlled change at a time so the final image stays predictable.', relatedCourse: 'Lighting and Rendering', relatedTutorial: 'Light Before Texture' },
+  { id: 'problem-green-screen', category: 'VFX', difficulty: 'Beginner', title: 'Green Screen', problem: 'The key is clean around the subject, but the composite still feels pasted on.', task: 'Key a subject and place it into a new plate with believable edges and light.', hint: 'Solve spill and edge color before trying to hide the composite with a heavy grade.', solution: 'Refine the matte, despill the edges, match the direction and softness of the plate light, then add shared grain and motion blur.', relatedCourse: 'Compositing Fundamentals', relatedTutorial: 'Green Screen: A Cleaner Composite' },
+  { id: 'problem-motion-tracking', category: 'VFX', difficulty: 'Intermediate', title: 'Motion Tracking', problem: 'A tracked element drifts even though the tracker says the solve is successful.', task: 'Attach a digital element to a moving plate without visible sliding.', hint: 'Track a high-contrast feature that belongs to the same plane as the element.', solution: 'Use multiple points when needed, remove bad tracks, solve the correct plane and check the composite at full speed rather than only frame by frame.', relatedCourse: 'Motion Tracking', relatedTutorial: 'Motion Tracking Basics' },
+  { id: 'problem-compositing', category: 'VFX', difficulty: 'Advanced', title: 'Compositing', problem: 'The layers are aligned, but the final image lacks the small cues that make it feel photographed together.', task: 'Integrate a generated element into live-action footage with consistent depth and atmosphere.', hint: 'Match the imperfections: lens softness, grain, shadow and color response.', solution: 'Build the composite in passes, match perspective and light first, then finish with shared optical treatment so every layer belongs to the same image.', relatedCourse: 'Compositing Fundamentals', relatedTutorial: 'Green Screen: A Cleaner Composite' },
+  { id: 'problem-particle-effects', category: 'VFX', difficulty: 'Intermediate', title: 'Particle Effects', problem: 'The particles add activity but do not feel connected to the scene or the force driving them.', task: 'Create a controlled particle pass that supports the action without becoming visual noise.', hint: 'Define the source, force and lifespan before choosing the look.', solution: 'Shape the emission over time, vary scale and velocity with purpose, then integrate the pass with depth, motion blur and the scene light.', relatedCourse: 'Particle Effects', relatedTutorial: 'Motion Tracking Basics' },
+  { id: 'problem-color-grading', category: 'VFX', difficulty: 'Advanced', title: 'Color Grading', problem: 'The grade is dramatic, but skin, highlights and the story focus are no longer trustworthy.', task: 'Finish a shot with a controlled palette that supports mood and continuity.', hint: 'Protect the neutral references before pushing the creative look.', solution: 'Balance exposure first, isolate the focal range, then shape contrast and hue relationships while checking the shot beside its neighboring frames.', relatedCourse: 'Color Grading', relatedTutorial: 'Color Grading the Final Shot' },
 ];
 
 function SectionHeading({ eyebrow, title, detail, inverse = false }: { eyebrow: string; title: string; detail?: string; inverse?: boolean }) {
@@ -93,16 +179,135 @@ function SectionHeading({ eyebrow, title, detail, inverse = false }: { eyebrow: 
   );
 }
 
+function toYouTubeEmbedUrl(videoUrl: string) {
+  if (!videoUrl) return null;
+  try {
+    const parsed = new URL(videoUrl);
+    const host = parsed.hostname.replace(/^www\./, '');
+    let videoId = '';
+
+    if (host === 'youtube.com' || host === 'm.youtube.com') {
+      videoId = parsed.searchParams.get('v') ?? parsed.pathname.split('/').filter(Boolean).pop() ?? '';
+    } else if (host === 'youtu.be') {
+      videoId = parsed.pathname.split('/').filter(Boolean)[0] ?? '';
+    }
+
+    if (!/^[A-Za-z0-9_-]{6,}$/.test(videoId)) return null;
+    return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+  } catch {
+    return null;
+  }
+}
+
+function VideoModal({ tutorial, onClose }: { tutorial: typeof tutorials[number]; onClose: () => void }) {
+  const embedUrl = toYouTubeEmbedUrl(tutorial.videoUrl);
+
+  return (
+    <div
+      className="fixed inset-0 z-[80] flex items-center justify-center bg-[#0b1511]/90 p-4 backdrop-blur-sm md:p-8"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tutorial-modal-title"
+      onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}
+    >
+      <div className="relative w-full max-w-5xl overflow-hidden rounded-3xl border border-[#53665a] bg-[#172520] shadow-2xl shadow-black/60">
+        <div className="flex items-start justify-between gap-5 border-b border-[#354a3d] px-5 py-4 text-[#eff0dc] md:px-7">
+          <div className="min-w-0">
+            <p className="font-mono-custom text-[9px] uppercase tracking-[.2em] text-[#c3e12c]">{tutorial.category} / TUTORIAL · {tutorial.duration}</p>
+            <h2 id="tutorial-modal-title" className="mt-2 font-display text-2xl tracking-[-.05em] md:text-3xl">{tutorial.title}</h2>
+          </div>
+          <button data-testid="button-close-tutorial-modal" aria-label="Close tutorial video" onClick={onClose} className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#53665a] text-[#c3e12c] transition-colors hover:bg-[#c3e12c] hover:text-[#172520]"><X size={16} /></button>
+        </div>
+        <div className="bg-[#0d1914] p-3 md:p-6">
+          {embedUrl ? (
+            <div className="relative aspect-video overflow-hidden rounded-2xl bg-black">
+              <iframe
+                key={embedUrl}
+                src={embedUrl}
+                title={tutorial.title}
+                className="absolute inset-0 h-full w-full"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          ) : (
+            <div className="flex aspect-video flex-col items-center justify-center rounded-2xl border border-dashed border-[#53665a] bg-[#1e3028] px-6 text-center text-[#eff0dc]">
+              <div className="grid h-14 w-14 place-items-center rounded-full border border-[#c3e12c] text-[#c3e12c]"><Play size={18} /></div>
+              <p className="mt-5 font-mono-custom text-[10px] uppercase tracking-[.2em] text-[#c3e12c]">Video unavailable</p>
+              <p className="mt-2 max-w-sm text-sm leading-6 text-[#aab5a8]">A verified video has not been configured for this tutorial yet. Check back when the lesson is published.</p>
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col gap-3 border-t border-[#354a3d] px-5 py-4 text-sm leading-6 text-[#aab5a8] md:flex-row md:items-center md:justify-between md:px-7">
+          <p className="max-w-xl">{tutorial.description}</p>
+          {embedUrl && <span className="shrink-0 font-mono-custom text-[9px] uppercase tracking-[.16em] text-[#c3e12c]">Player controls: play / pause / fullscreen</span>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProblemModal({ problem, onClose }: { problem: Problem; onClose: () => void }) {
+  return (
+    <div
+      className="fixed inset-0 z-[80] flex items-center justify-center overflow-y-auto bg-[#0b1511]/90 p-4 backdrop-blur-sm md:p-8"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="problem-modal-title"
+      onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}
+    >
+      <div className="relative my-auto w-full max-w-3xl overflow-hidden rounded-3xl border border-[#c3e12c]/40 bg-[#ececdf] text-[#172520] shadow-2xl shadow-black/60">
+        <div className="flex items-start justify-between gap-5 bg-[#172520] px-5 py-6 text-[#eff0dc] md:px-8 md:py-7">
+          <div>
+            <p className="font-mono-custom text-[9px] uppercase tracking-[.2em] text-[#c3e12c]">{problem.category} / {problem.difficulty}</p>
+            <h2 id="problem-modal-title" className="mt-2 font-display text-4xl font-semibold leading-[.95] tracking-[-.07em] md:text-5xl">{problem.title}</h2>
+          </div>
+          <button data-testid="button-close-problem-modal" aria-label="Close problem details" onClick={onClose} className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#53665a] text-[#c3e12c] transition-colors hover:bg-[#c3e12c] hover:text-[#172520]"><X size={16} /></button>
+        </div>
+        <div className="grid gap-7 p-5 md:grid-cols-[.8fr_1.2fr] md:p-8">
+          <div>
+            <p className="font-mono-custom text-[9px] uppercase tracking-[.18em] text-[#68731f]">THE PROBLEM</p>
+            <p className="mt-3 text-sm leading-6 text-[#5f675f]">{problem.problem}</p>
+            <p className="mt-7 font-mono-custom text-[9px] uppercase tracking-[.18em] text-[#68731f]">YOUR TASK</p>
+            <p className="mt-3 text-sm leading-6 text-[#5f675f]">{problem.task}</p>
+          </div>
+          <div className="space-y-5">
+            <div className="rounded-2xl bg-[#dedfcf] p-5">
+              <p className="font-mono-custom text-[9px] uppercase tracking-[.18em] text-[#68731f]">HINT</p>
+              <p className="mt-3 text-sm leading-6 text-[#5f675f]">{problem.hint}</p>
+            </div>
+            <div className="rounded-2xl bg-[#c3e12c] p-5">
+              <p className="font-mono-custom text-[9px] uppercase tracking-[.18em] text-[#59621d]">SOLUTION</p>
+              <p className="mt-3 text-sm leading-6 text-[#344116]">{problem.solution}</p>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-3 border-t border-[#c7cabc] px-5 py-5 text-[10px] font-bold uppercase tracking-[.12em] md:flex-row md:items-center md:justify-between md:px-8">
+          <span className="text-[#7b8278]">Keep learning with</span>
+          <div className="flex flex-wrap gap-2">
+            <a href="#courses" onClick={onClose} className="rounded-full border border-[#9da497] px-3 py-2 transition-colors hover:border-[#172520]">Course: {problem.relatedCourse}</a>
+            <a href="#tutorials" onClick={onClose} className="rounded-full border border-[#9da497] px-3 py-2 transition-colors hover:border-[#172520]">Tutorial: {problem.relatedTutorial}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [courseFilter, setCourseFilter] = useState('ALL');
   const [tutorialFilter, setTutorialFilter] = useState('ALL');
-  const [expandedProblem, setExpandedProblem] = useState(0);
+  const [problemCategoryFilter, setProblemCategoryFilter] = useState('ALL');
+  const [problemDifficultyFilter, setProblemDifficultyFilter] = useState('ALL');
+  const [selectedTutorial, setSelectedTutorial] = useState<typeof tutorials[number] | null>(null);
+  const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null);
   const [notice, setNotice] = useState('');
   const [email, setEmail] = useState('');
 
   const filteredCourses = courseFilter === 'ALL' ? courses : courses.filter((course) => course.category === courseFilter);
   const filteredTutorials = tutorialFilter === 'ALL' ? tutorials : tutorials.filter((tutorial) => tutorial.category === tutorialFilter);
+  const filteredProblems = problems.filter((problem) => (problemCategoryFilter === 'ALL' || problem.category === problemCategoryFilter) && (problemDifficultyFilter === 'ALL' || problem.difficulty === problemDifficultyFilter));
   const showNotice = (message: string) => {
     setNotice(message);
     window.setTimeout(() => setNotice(''), 3000);
@@ -111,6 +316,8 @@ function App() {
   return (
     <main className="grain overflow-hidden bg-[#ececdf] text-[#172520]">
       {notice && <div data-testid="status-notice" className="fixed bottom-5 left-1/2 z-[60] -translate-x-1/2 rounded-full bg-[#c3e12c] px-5 py-3 text-xs font-bold shadow-xl">{notice}</div>}
+      {selectedTutorial && <VideoModal tutorial={selectedTutorial} onClose={() => setSelectedTutorial(null)} />}
+      {selectedProblem && <ProblemModal problem={selectedProblem} onClose={() => setSelectedProblem(null)} />}
       <header className="fixed left-0 right-0 top-0 z-40 border-b border-[#d0d2c3]/70 bg-[#ececdf]/90 backdrop-blur-xl">
         <div className="mx-auto flex h-[74px] max-w-[1380px] items-center justify-between px-5 md:px-10">
           <a data-testid="link-brand" href="#home" className="group flex items-center gap-3">
@@ -206,26 +413,64 @@ function App() {
             {['ALL', '2D', '3D', 'VFX'].map((filter) => <button data-testid={`button-tutorial-filter-${filter.toLowerCase()}`} key={filter} onClick={() => setTutorialFilter(filter)} className={`rounded-full border px-4 py-2 font-mono-custom text-[10px] tracking-[.16em] transition-colors ${tutorialFilter === filter ? 'border-[#c3e12c] bg-[#c3e12c] text-[#172520]' : 'border-[#53635a] text-[#adb6a7] hover:border-[#c3e12c]'}`}>{filter}</button>)}
           </div>
           <div className="mt-10 grid gap-4 md:grid-cols-2">
-            {filteredTutorials.map((tutorial, index) => <button data-testid={`card-tutorial-${tutorial.id}`} key={tutorial.id} onClick={() => showNotice(`Playing tutorial: ${tutorial.title}`)} className="group flex items-center gap-5 rounded-2xl border border-[#3a4c41] bg-[#1e3028] p-4 text-left transition-colors hover:border-[#c3e12c]">
-              <div className={`relative grid h-28 w-36 shrink-0 place-items-center overflow-hidden rounded-xl ${tutorial.color}`}><span className="absolute inset-0 opacity-35 line-grid" /><span className="relative grid h-10 w-10 place-items-center rounded-full border border-[#172520] text-[#172520] transition-transform group-hover:scale-110"><Play size={13} fill="currentColor" /></span><span className="absolute bottom-2 left-2 font-mono-custom text-[9px] font-bold text-[#172520]">{String(index + 1).padStart(2, '0')}</span></div>
-              <div className="min-w-0 flex-1"><div className="flex justify-between gap-4 font-mono-custom text-[9px] tracking-[.16em] text-[#a8b3a5]"><span>{tutorial.category} / TUTORIAL</span><span>{tutorial.time}</span></div><h3 className="mt-3 font-display text-xl font-medium tracking-[-.04em] text-[#eff0dc]">{tutorial.title}</h3><span className="mt-3 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.12em] text-[#c3e12c]">Watch now <ArrowRight size={13} /></span></div>
-            </button>)}
+            {filteredTutorials.map((tutorial, index) => <article data-testid={`card-tutorial-${tutorial.id}`} key={tutorial.id} className="group overflow-hidden rounded-2xl border border-[#3a4c41] bg-[#1e3028] transition-colors hover:border-[#c3e12c]">
+              <div className="flex flex-col gap-4 p-4 sm:flex-row">
+                <div className={`relative grid h-44 shrink-0 place-items-center overflow-hidden rounded-xl sm:h-28 sm:w-36 ${tutorial.color}`}>
+                  <img src={tutorial.thumbnail} alt="" className="absolute inset-0 h-full w-full object-cover opacity-35 mix-blend-multiply transition-transform duration-700 group-hover:scale-110" />
+                  <span className="absolute inset-0 opacity-35 line-grid" />
+                  <span className="relative grid h-10 w-10 place-items-center rounded-full border border-[#172520] text-[#172520]"><Play size={13} fill="currentColor" /></span>
+                  <span className="absolute bottom-2 left-2 font-mono-custom text-[9px] font-bold text-[#172520]">{String(index + 1).padStart(2, '0')}</span>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex justify-between gap-4 font-mono-custom text-[9px] tracking-[.16em] text-[#a8b3a5]"><span>{tutorial.category} / TUTORIAL</span><span>{tutorial.duration}</span></div>
+                  <h3 className="mt-3 font-display text-xl font-medium tracking-[-.04em] text-[#eff0dc]">{tutorial.title}</h3>
+                  <p className="mt-2 text-sm leading-5 text-[#aab5a8]">{tutorial.description}</p>
+                  <button data-testid={`button-watch-tutorial-${tutorial.id}`} onClick={() => setSelectedTutorial(tutorial)} className="mt-4 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.12em] text-[#c3e12c]">Watch Tutorial <ArrowRight size={13} /></button>
+                </div>
+              </div>
+            </article>)}
           </div>
         </div>
       </section>
 
       <section id="problems" className="mx-auto max-w-[1380px] px-5 py-24 md:px-10 md:py-32">
-        <SectionHeading eyebrow="04 / PROBLEM SOLVING" title="Stuck is a useful place to start." detail="Name the friction. Find the principle. Move the work forward with a little more intention." />
-        <div className="mt-14 grid gap-12 md:grid-cols-[.8fr_1.2fr]">
-          <div><div className="font-display text-[9rem] font-semibold leading-none tracking-[-.11em] text-[#c3e12c]">?</div><p className="max-w-xs text-sm leading-6 text-[#606960]">A growing collection of practical answers to the problems that show up between the first idea and the final frame.</p></div>
-          <div className="border-t border-[#bfc3b3]">{problems.map(([question, answer], index) => <div key={question} className="border-b border-[#bfc3b3]"><button data-testid={`button-problem-${index}`} onClick={() => setExpandedProblem(expandedProblem === index ? -1 : index)} className="flex w-full items-center justify-between gap-4 py-6 text-left"><span className="font-display text-2xl font-medium tracking-[-.045em]">{question}</span><span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border border-[#9ea69b] transition-transform ${expandedProblem === index ? 'rotate-45 bg-[#172520] text-[#c3e12c]' : ''}`}><Plus size={15} /></span></button>{expandedProblem === index && <p className="max-w-xl pb-6 pr-12 text-sm leading-6 text-[#606960]">{answer}</p>}</div>)}</div>
+        <SectionHeading eyebrow="04 / PROBLEM SOLVING" title="PROBLEM SOLVING" detail="Learn by solving real animation, 3D and VFX challenges." />
+        <div className="mt-10 flex flex-col gap-3 border-y border-[#bfc3b3] py-5 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-wrap gap-2">
+            {['ALL', '2D', '3D', 'VFX'].map((filter) => <button data-testid={`button-problem-category-${filter.toLowerCase()}`} key={filter} onClick={() => setProblemCategoryFilter(filter)} className={`rounded-full border px-4 py-2 font-mono-custom text-[10px] tracking-[.16em] transition-colors ${problemCategoryFilter === filter ? 'border-[#172520] bg-[#172520] text-[#eff0dc]' : 'border-[#b8bcae] text-[#697168] hover:border-[#172520]'}`}>{filter}</button>)}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {['ALL', 'Beginner', 'Intermediate', 'Advanced'].map((filter) => <button data-testid={`button-problem-difficulty-${filter.toLowerCase()}`} key={filter} onClick={() => setProblemDifficultyFilter(filter)} className={`rounded-full border px-4 py-2 font-mono-custom text-[10px] tracking-[.12em] transition-colors ${problemDifficultyFilter === filter ? 'border-[#7d891b] bg-[#c3e12c] text-[#172520]' : 'border-[#b8bcae] text-[#697168] hover:border-[#172520]'}`}>{filter}</button>)}
+          </div>
         </div>
+        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {filteredProblems.map((problem) => <article data-testid={`card-problem-${problem.id}`} key={problem.id} className="flex min-h-[245px] flex-col rounded-2xl border border-[#c9ccbd] bg-[#f2f2e7] p-5 transition-transform hover:-translate-y-1">
+            <div className="flex items-start justify-between gap-4"><span className="font-mono-custom text-[9px] uppercase tracking-[.18em] text-[#68731f]">{problem.category} / {problem.difficulty}</span><span className="font-mono-custom text-[9px] text-[#9aa196]">CHALLENGE</span></div>
+            <h3 className="mt-6 font-display text-2xl font-semibold tracking-[-.05em]">{problem.title}</h3>
+            <p className="mt-3 line-clamp-3 text-sm leading-5 text-[#626a62]">{problem.problem}</p>
+            <button data-testid={`button-view-problem-${problem.id}`} onClick={() => setSelectedProblem(problem)} className="mt-auto inline-flex items-center gap-2 pt-6 text-left text-[10px] font-bold uppercase tracking-[.12em] text-[#172520]">View Problem <ArrowRight size={13} /></button>
+          </article>)}
+        </div>
+        {!filteredProblems.length && <div className="mt-10 rounded-2xl border border-dashed border-[#bfc3b3] p-10 text-center text-sm text-[#606960]">No challenges match both filters. Try a different combination.</div>}
       </section>
 
       <section className="border-y border-[#cfd1c1] bg-[#c3e12c]">
         <div className="mx-auto grid max-w-[1380px] gap-12 px-5 py-20 md:grid-cols-[1fr_1.1fr] md:px-10 md:py-28">
-          <div><p className="font-mono-custom text-[10px] uppercase tracking-[.28em] text-[#59621d]">05 / WATCH & DISCOVER</p><h2 className="font-display mt-4 max-w-lg text-5xl font-semibold leading-[.88] tracking-[-.08em] md:text-7xl">See how a thought becomes a frame.</h2><button data-testid="button-view-playlist" onClick={() => showNotice('The discovery reel is ready for your next session.')} className="mt-8 inline-flex items-center gap-3 rounded-full bg-[#172520] px-5 py-3 text-xs font-bold uppercase tracking-[.11em] text-[#eef0df]">View discovery reel <ExternalLink size={14} /></button></div>
-          <div className="relative min-h-[300px] overflow-hidden rounded-3xl bg-[#172520] p-6 text-[#eff0dc]"><div className="absolute inset-0 opacity-40 line-grid" /><div className="relative flex h-full flex-col justify-between"><div className="flex items-start justify-between"><span className="font-mono-custom text-[10px] tracking-[.2em] text-[#c3e12c]">ANIMORA SELECTS / 07</span><span className="rounded-full border border-[#72836e] px-3 py-1 font-mono-custom text-[9px]">04:12</span></div><div><p className="font-display max-w-md text-3xl leading-[.95] tracking-[-.06em]">The details are where the image starts to breathe.</p><div className="mt-6 flex items-center gap-3"><span className="grid h-12 w-12 place-items-center rounded-full bg-[#c3e12c] text-[#172520]"><Play size={16} fill="currentColor" /></span><span className="font-mono-custom text-[9px] uppercase tracking-[.2em] text-[#aeb9a9]">Play / 01</span></div></div></div></div>
+          <div><p className="font-mono-custom text-[10px] uppercase tracking-[.28em] text-[#59621d]">05 / WATCH & DISCOVER</p><h2 className="font-display mt-4 max-w-lg text-5xl font-semibold leading-[.88] tracking-[-.08em] md:text-7xl">See how a thought becomes a frame.</h2><p className="mt-6 max-w-md text-sm leading-6 text-[#455117]">Three starting points for the next session, chosen across the full Animora practice.</p></div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {[
+              ['2D Creative Demo', 'tut-walk-cycle'],
+              ['3D Visual Demo', 'tut-3d-modeling'],
+              ['VFX Cinematic Demo', 'tut-green-screen'],
+            ].map(([label, tutorialId], index) => {
+              const tutorial = tutorials.find((item) => item.id === tutorialId)!;
+              return <button data-testid={`button-discover-${tutorial.category.toLowerCase()}`} key={label} onClick={() => setSelectedTutorial(tutorial)} className="group relative min-h-[220px] overflow-hidden rounded-2xl bg-[#172520] p-5 text-left text-[#eff0dc] transition-transform hover:-translate-y-1">
+                <img src={tutorial.thumbnail} alt="" className="absolute inset-0 h-full w-full object-cover opacity-25 mix-blend-screen transition-transform duration-700 group-hover:scale-110" />
+                <span className="absolute inset-0 opacity-30 line-grid" />
+                <span className="relative flex h-full flex-col justify-between"><span className="font-mono-custom text-[9px] tracking-[.18em] text-[#c3e12c]">0{index + 1} / {tutorial.category}</span><span><span className="grid h-10 w-10 place-items-center rounded-full bg-[#c3e12c] text-[#172520]"><Play size={13} fill="currentColor" /></span><span className="mt-4 block font-display text-xl leading-none tracking-[-.05em]">{label}</span></span></span>
+              </button>;
+            })}
+          </div>
         </div>
       </section>
 
