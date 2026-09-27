@@ -119,7 +119,7 @@ try {
         $adminStatement = $database->prepare(
             'INSERT INTO users (name, email, password_hash, role)
              VALUES (:name, :email, :password_hash, :role)
-             ON CONFLICT (LOWER(email)) DO UPDATE
+             ON CONFLICT (email) DO UPDATE
              SET name = EXCLUDED.name, password_hash = EXCLUDED.password_hash, role = EXCLUDED.role, updated_at = NOW()'
         );
         $adminStatement->execute([

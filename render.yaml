@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: animora-studio
+    env: docker
+    plan: free
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: BASE_PATH
+        value: /animora-api
+      - key: ANIMORA_ADMIN_EMAIL
+        value: admin@animora.local
+      - key: ANIMORA_ADMIN_PASSWORD
+        value: Admin@12345

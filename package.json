@@ -4,6 +4,9 @@
   "license": "MIT",
   "scripts": {
     "preinstall": "node -e \"if (!process.env.npm_config_user_agent || !process.env.npm_config_user_agent.startsWith('pnpm/')) { console.error('Use pnpm instead'); process.exit(1); }\"",
+    "dev": "pnpm --filter @workspace/animora-studio-library run dev",
+    "backend": "php -S localhost:8000 -t backend/public backend/public/router.php",
+    "db:setup": "php backend/database/setup.php",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
