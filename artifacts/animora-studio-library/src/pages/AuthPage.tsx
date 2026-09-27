@@ -1,20 +1,11 @@
 import { type FormEvent, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check, LoaderCircle } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
-import { ApiError, apiFetch } from '@/lib/api';
+import { authSignIn, authSignUp, type AppUser } from '@/lib/supabase';
 
 type AuthPageProps = {
   mode: 'login' | 'signup';
   admin?: boolean;
-};
-
-type AuthResponse = {
-  user: {
-    id: number;
-    name: string;
-    email: string;
-    role: 'user' | 'admin';
-  };
 };
 
 export default function AuthPage({ mode, admin = false }: AuthPageProps) {
@@ -38,18 +29,16 @@ export default function AuthPage({ mode, admin = false }: AuthPageProps) {
     setError('');
     setIsSubmitting(true);
     try {
-      const response = await apiFetch<AuthResponse>(isSignup ? '/auth/register' : '/auth/login', {
-        method: 'POST',
-        body: JSON.stringify(isSignup ? { name, email, password } : { email, password }),
-      });
+      const user: AppUser = isSignup
+        ? await authSignUp(name, email, password)
+        : await authSignIn(email, password);
 
-      if (admin && response.user.role !== 'admin') {
-        await apiFetch('/auth/logout', { method: 'POST' });
-        throw new ApiError('This account does not have administrator access.', 403);
+      if (admin && user.role !== 'admin') {
+        throw new Error('This account does not have administrator access.');
       }
       navigate(admin ? '/admin/dashboard' : '/');
     } catch (submitError) {
-      setError(submitError instanceof ApiError ? submitError.message : 'Unable to connect to the library.');
+      setError(submitError instanceof Error ? submitError.message : 'Unable to connect to the library.');
     } finally {
       setIsSubmitting(false);
     }

@@ -13,6 +13,7 @@ import {
   X,
 } from 'lucide-react';
 import { ApiError, apiFetch } from '@/lib/api';
+import { authGetCurrentUser, authSignOut, submitContactForm, supabase } from '@/lib/supabase';
 
 const navItems = [
   ['Home', '#home'],
@@ -417,11 +418,30 @@ function App() {
       if (active) setContentError('Live library content is unavailable. Showing the latest local catalog.');
     });
 
-    apiFetch<{ user: { name: string; email: string; role: 'user' | 'admin' } }>('/auth/me')
-      .then((response) => { if (active) setSessionUser(response.user); })
-      .catch(() => undefined);
+    const syncUser = () => {
+      authGetCurrentUser().then((user) => {
+        if (active) {
+          setSessionUser(user ? { name: user.name, email: user.email, role: user.role } : null);
+        }
+      }).catch(() => undefined);
+    };
 
-    return () => { active = false; };
+    syncUser();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        syncUser();
+      } else {
+        if (active) {
+          setSessionUser(null);
+        }
+      }
+    });
+
+    return () => {
+      active = false;
+      authListener?.subscription?.unsubscribe();
+    };
   }, []);
 
   const filteredCourses = courseFilter === 'ALL' ? courseItems : courseItems.filter((course) => course.category === courseFilter);
@@ -429,10 +449,10 @@ function App() {
   const filteredProblems = problemItems.filter((problem) => (problemCategoryFilter === 'ALL' || problem.category === problemCategoryFilter) && (problemDifficultyFilter === 'ALL' || problem.difficulty === problemDifficultyFilter));
   const showNotice = (message: string) => {
     setNotice(message);
-    window.setTimeout(() => setNotice(''), 3000);
+    window.setTimeout(() => setNotice(''), 3500);
   };
   const handleLogout = async () => {
-    await apiFetch('/auth/logout', { method: 'POST' }).catch(() => undefined);
+    await authSignOut().catch(() => undefined);
     setSessionUser(null);
     showNotice('You have been logged out.');
   };
@@ -440,11 +460,15 @@ function App() {
     event.preventDefault();
     setIsContactSubmitting(true);
     try {
-      await apiFetch('/contact-messages', { method: 'POST', body: JSON.stringify(contact) });
+      const { formsubmitSent } = await submitContactForm(contact);
       setContact({ name: '', email: '', subject: '', message: '' });
-      showNotice('Your message was saved. We will be in touch.');
+      showNotice(
+        formsubmitSent
+          ? 'Message sent! Email delivered to najimashaikh267@gmail.com & saved.'
+          : 'Your message was saved to our contact inbox.'
+      );
     } catch (error) {
-      showNotice(error instanceof ApiError ? error.message : 'Your message could not be saved.');
+      showNotice(error instanceof Error ? error.message : 'Your message could not be saved.');
     } finally {
       setIsContactSubmitting(false);
     }
@@ -665,7 +689,7 @@ function App() {
       <section id="contact" className="bg-[#dedfcf] px-5 py-24 md:px-10 md:py-28">
         <div className="mx-auto grid max-w-[1380px] gap-12 md:grid-cols-[.95fr_1.05fr] md:items-end">
           <div><p className="font-mono-custom text-[10px] uppercase tracking-[.28em] text-[#68731f]">07 / CONTACT</p><h2 className="font-display mt-4 max-w-xl text-5xl font-semibold leading-[.88] tracking-[-.08em] md:text-7xl">Bring a question.<br /><span className="text-[#7d891b]">Leave with a direction.</span></h2></div>
-           <form onSubmit={submitContact} className="rounded-3xl bg-[#172520] p-7 text-[#eff0dc] md:p-10"><p className="font-display text-2xl tracking-[-.04em]">Bring a question.</p><p className="mt-2 max-w-sm text-sm leading-6 text-[#adb6a7]">Send a note to the studio. Every message is saved to our contact inbox.</p><div className="mt-8 grid gap-5 sm:grid-cols-2"><input data-testid="input-contact-name" aria-label="Name" required value={contact.name} onChange={(event) => setContact({ ...contact, name: event.target.value })} placeholder="Your name" className="border-b border-[#657267] bg-transparent px-0 py-3 text-sm outline-none placeholder:text-[#778479] focus:border-[#c3e12c]" /><input data-testid="input-contact-email" aria-label="Email address" required type="email" value={contact.email} onChange={(event) => setContact({ ...contact, email: event.target.value })} placeholder="your@email.com" className="border-b border-[#657267] bg-transparent px-0 py-3 text-sm outline-none placeholder:text-[#778479] focus:border-[#c3e12c]" /><input data-testid="input-contact-subject" aria-label="Subject" required value={contact.subject} onChange={(event) => setContact({ ...contact, subject: event.target.value })} placeholder="Subject" className="border-b border-[#657267] bg-transparent px-0 py-3 text-sm outline-none placeholder:text-[#778479] focus:border-[#c3e12c] sm:col-span-2" /><textarea data-testid="input-contact-message" aria-label="Message" required value={contact.message} onChange={(event) => setContact({ ...contact, message: event.target.value })} placeholder="Your message" rows={4} className="resize-none border-b border-[#657267] bg-transparent px-0 py-3 text-sm outline-none placeholder:text-[#778479] focus:border-[#c3e12c] sm:col-span-2" /></div><button data-testid="button-contact-submit" disabled={isContactSubmitting} type="submit" className="mt-7 flex items-center gap-3 rounded-full bg-[#c3e12c] px-5 py-3 text-xs font-bold uppercase tracking-[.11em] text-[#172520] disabled:opacity-60">{isContactSubmitting ? 'Saving...' : 'Send message'} <ArrowRight size={16} /></button><p className="mt-5 flex items-center gap-2 font-mono-custom text-[9px] uppercase tracking-[.16em] text-[#829084]"><Check size={13} className="text-[#c3e12c]" /> No fake success. Only confirmed saves.</p></form>
+           <form onSubmit={submitContact} className="rounded-3xl bg-[#172520] p-7 text-[#eff0dc] md:p-10"><p className="font-display text-2xl tracking-[-.04em]">Bring a question.</p><p className="mt-2 max-w-sm text-sm leading-6 text-[#adb6a7]">Send a note to the studio. Every message is saved to our contact inbox.</p><div className="mt-8 grid gap-5 sm:grid-cols-2"><input data-testid="input-contact-name" aria-label="Name" required value={contact.name} onChange={(event) => setContact({ ...contact, name: event.target.value })} placeholder="Your name" className="border-b border-[#657267] bg-transparent px-0 py-3 text-sm outline-none placeholder:text-[#778479] focus:border-[#c3e12c]" /><input data-testid="input-contact-email" aria-label="Email address" required type="email" value={contact.email} onChange={(event) => setContact({ ...contact, email: event.target.value })} placeholder="your@email.com" className="border-b border-[#657267] bg-transparent px-0 py-3 text-sm outline-none placeholder:text-[#778479] focus:border-[#c3e12c]" /><input data-testid="input-contact-subject" aria-label="Subject" required value={contact.subject} onChange={(event) => setContact({ ...contact, subject: event.target.value })} placeholder="Subject" className="border-b border-[#657267] bg-transparent px-0 py-3 text-sm outline-none placeholder:text-[#778479] focus:border-[#c3e12c] sm:col-span-2" /><textarea data-testid="input-contact-message" aria-label="Message" required value={contact.message} onChange={(event) => setContact({ ...contact, message: event.target.value })} placeholder="Your message" rows={4} className="resize-none border-b border-[#657267] bg-transparent px-0 py-3 text-sm outline-none placeholder:text-[#778479] focus:border-[#c3e12c] sm:col-span-2" /></div><button data-testid="button-contact-submit" disabled={isContactSubmitting} type="submit" className="mt-7 flex items-center gap-3 rounded-full bg-[#c3e12c] px-5 py-3 text-xs font-bold uppercase tracking-[.11em] text-[#172520] disabled:opacity-60">{isContactSubmitting ? 'Sending...' : 'Send message'} <ArrowRight size={16} /></button><p className="mt-5 flex items-center gap-2 font-mono-custom text-[9px] uppercase tracking-[.16em] text-[#829084]"><Check size={13} className="text-[#c3e12c]" /> Confirmed save & email delivery to najimashaikh267@gmail.com</p></form>
         </div>
       </section>
 
