@@ -12,8 +12,19 @@ import {
   Sparkles,
   X,
 } from 'lucide-react';
-import { ApiError, apiFetch } from '@/lib/api';
-import { authGetCurrentUser, authSignOut, submitContactForm, supabase } from '@/lib/supabase';
+import { ApiError } from '@/lib/api';
+import {
+  authGetCurrentUser,
+  authSignOut,
+  submitContactForm,
+  supabase,
+  fetchCoursesFromDb,
+  fetchTutorialsFromDb,
+  fetchProblemsFromDb,
+  type CourseItem,
+  type TutorialItem,
+  type ProblemItem,
+} from '@/lib/supabase';
 
 const navItems = [
   ['Home', '#home'],

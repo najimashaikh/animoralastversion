@@ -269,3 +269,168 @@ export async function submitContactForm(contact: {
 
   return { formsubmitSent, saved };
 }
+
+export interface CourseItem {
+  id: string;
+  title: string;
+  description: string;
+  desc: string;
+  category: string;
+  visual: string;
+  level: string;
+  duration: string;
+  meta: string;
+  videoUrl: string;
+  thumbnail: string;
+}
+
+export interface TutorialItem {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  duration: string;
+  videoUrl: string;
+  thumbnail: string;
+  color?: string;
+}
+
+export interface ProblemItem {
+  id: string;
+  title: string;
+  category: '2D' | '3D' | 'VFX';
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  problem: string;
+  task: string;
+  hint: string;
+  solution: string;
+  relatedCourse: string;
+  relatedTutorial: string;
+}
+
+/**
+ * Fetch all Courses from Supabase DB (with fallback to local backend API)
+ */
+export async function fetchCoursesFromDb(): Promise<CourseItem[]> {
+  try {
+    const { data, error } = await supabase
+      .from('courses')
+      .select('*')
+      .order('order_index', { ascending: true });
+
+    if (!error && data && data.length > 0) {
+      return data.map((item) => ({
+        id: `course-${item.id}`,
+        title: item.title,
+        description: item.description,
+        desc: item.description,
+        category: item.category,
+        visual: item.category,
+        level: item.level || 'FOUNDATION',
+        duration: item.duration || '3h 40m',
+        meta: item.duration || '3h 40m',
+        videoUrl: item.video_url,
+        thumbnail: item.thumbnail || '/animora-art.jpg',
+      }));
+    }
+  } catch (err) {
+    console.warn('Supabase courses fetch error, falling back to local API:', err);
+  }
+
+  const res = await apiFetch<{ courses: Array<{ id: number; title: string; description: string; category: string; level: string; duration: string; videoUrl?: string; thumbnail?: string }> }>('/courses');
+  return res.courses.map((item) => ({
+    id: `course-${item.id}`,
+    title: item.title,
+    description: item.description,
+    desc: item.description,
+    category: item.category,
+    visual: item.category,
+    level: item.level,
+    duration: item.duration,
+    meta: item.duration,
+    videoUrl: item.videoUrl || 'https://www.youtube.com/watch?v=haa7n3UGyDc',
+    thumbnail: item.thumbnail || '/animora-art.jpg',
+  }));
+}
+
+/**
+ * Fetch all Tutorials from Supabase DB (with fallback to local backend API)
+ */
+export async function fetchTutorialsFromDb(): Promise<TutorialItem[]> {
+  try {
+    const { data, error } = await supabase
+      .from('tutorials')
+      .select('*')
+      .order('order_index', { ascending: true });
+
+    if (!error && data && data.length > 0) {
+      return data.map((item) => ({
+        id: `tutorial-${item.id}`,
+        title: item.title,
+        description: item.description,
+        category: item.category,
+        duration: item.duration,
+        videoUrl: item.video_url,
+        thumbnail: item.thumbnail || '/animora-hero.jpg',
+        color: item.color || (item.category === '3D' ? 'bg-[#e2e5a9]' : item.category === 'VFX' ? 'bg-[#c3e12c]' : 'bg-[#d7d4c8]'),
+      }));
+    }
+  } catch (err) {
+    console.warn('Supabase tutorials fetch error, falling back to local API:', err);
+  }
+
+  const res = await apiFetch<{ tutorials: Array<{ id: number; title: string; description: string; category: string; duration: string; videoUrl?: string; thumbnail?: string }> }>('/tutorials');
+  return res.tutorials.map((item) => ({
+    id: `tutorial-${item.id}`,
+    title: item.title,
+    description: item.description,
+    category: item.category,
+    duration: item.duration,
+    videoUrl: item.videoUrl || 'https://www.youtube.com/watch?v=n_11DSOBmLc',
+    thumbnail: item.thumbnail || '/animora-hero.jpg',
+    color: item.category === '3D' ? 'bg-[#e2e5a9]' : item.category === 'VFX' ? 'bg-[#c3e12c]' : 'bg-[#d7d4c8]',
+  }));
+}
+
+/**
+ * Fetch all Problems from Supabase DB (with fallback to local backend API)
+ */
+export async function fetchProblemsFromDb(): Promise<ProblemItem[]> {
+  try {
+    const { data, error } = await supabase
+      .from('problems')
+      .select('*')
+      .order('order_index', { ascending: true });
+
+    if (!error && data && data.length > 0) {
+      return data.map((item) => ({
+        id: `problem-${item.id}`,
+        title: item.title,
+        category: item.category as '2D' | '3D' | 'VFX',
+        difficulty: item.difficulty as 'Beginner' | 'Intermediate' | 'Advanced',
+        problem: item.problem,
+        task: item.task,
+        hint: item.hint,
+        solution: item.solution,
+        relatedCourse: item.related_course,
+        relatedTutorial: item.related_tutorial,
+      }));
+    }
+  } catch (err) {
+    console.warn('Supabase problems fetch error, falling back to local API:', err);
+  }
+
+  const res = await apiFetch<{ problems: Array<ProblemItem> }>('/problems');
+  return res.problems.map((item) => ({
+    id: `problem-${item.id}`,
+    title: item.title,
+    category: item.category,
+    difficulty: item.difficulty,
+    problem: item.problem,
+    task: item.task,
+    hint: item.hint,
+    solution: item.solution,
+    relatedCourse: item.relatedCourse || '',
+    relatedTutorial: item.relatedTutorial || '',
+  }));
+}
