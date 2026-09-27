@@ -7,6 +7,7 @@
     "dev": "pnpm --filter @workspace/animora-studio-library run dev",
     "backend": "php -S localhost:8000 -t backend/public backend/public/router.php",
     "db:setup": "php backend/database/setup.php",
+    "view:messages": "php backend/database/view_messages.php",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"

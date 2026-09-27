@@ -390,7 +390,17 @@ function App() {
           </a>
           <nav className="hidden items-center gap-6 lg:flex" aria-label="Primary navigation">
             {navItems.map(([label, href]) => <a data-testid={`link-nav-${label.toLowerCase().replaceAll(' ', '-')}`} key={label} href={href} className="text-[11px] font-semibold uppercase tracking-[.11em] text-[#4c554d] transition-colors hover:text-[#7a8816]">{label}</a>)}
-            {sessionUser ? <><span className="max-w-[120px] truncate text-[10px] font-semibold uppercase tracking-[.08em] text-[#68731f]">{sessionUser.name}</span><button data-testid="button-logout" onClick={handleLogout} className="rounded-full border border-[#172520] px-4 py-2 text-[11px] font-bold uppercase tracking-[.12em] transition-colors hover:bg-[#172520] hover:text-[#eef0df]">Logout</button></> : <a data-testid="button-login" href="/login" className="rounded-full border border-[#172520] px-4 py-2 text-[11px] font-bold uppercase tracking-[.12em] transition-colors hover:bg-[#172520] hover:text-[#eef0df]">Login</a>}
+            {sessionUser ? (
+              <div className="flex items-center gap-3">
+                <span className="max-w-[120px] truncate text-[10px] font-semibold uppercase tracking-[.08em] text-[#68731f]">{sessionUser.name}</span>
+                {sessionUser.role === 'admin' && (
+                  <a data-testid="link-admin-dashboard" href="/admin/dashboard" className="rounded-full bg-[#c3e12c] px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[.1em] text-[#172520] transition-colors hover:bg-[#b0cb25]">Dashboard</a>
+                )}
+                <button data-testid="button-logout" onClick={handleLogout} className="rounded-full border border-[#172520] px-4 py-2 text-[11px] font-bold uppercase tracking-[.12em] transition-colors hover:bg-[#172520] hover:text-[#eef0df]">Logout</button>
+              </div>
+            ) : (
+              <a data-testid="button-login" href="/login" className="rounded-full border border-[#172520] px-4 py-2 text-[11px] font-bold uppercase tracking-[.12em] transition-colors hover:bg-[#172520] hover:text-[#eef0df]">Login</a>
+            )}
           </nav>
           <button data-testid="button-mobile-menu" aria-label="Toggle navigation menu" onClick={() => setMenuOpen(!menuOpen)} className="grid h-10 w-10 place-items-center rounded-full border border-[#afb4a4] lg:hidden">
             {menuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -557,7 +567,14 @@ function App() {
       <footer className="bg-[#172520] px-5 py-12 text-[#eff0dc] md:px-10">
         <div className="mx-auto max-w-[1380px]">
           <div className="flex flex-col gap-10 border-b border-[#3c4b42] pb-12 md:flex-row md:items-end md:justify-between"><div><a data-testid="link-footer-brand" href="#home" className="font-display text-2xl font-semibold tracking-[-.05em]">ANIMORA <span className="text-[#c3e12c]">STUDIO LIBRARY</span></a><p className="mt-3 max-w-sm text-sm leading-6 text-[#89958a]">A place for the work behind the work.</p></div><div className="flex flex-wrap gap-x-6 gap-y-3">{navItems.map(([label, href]) => <a data-testid={`link-footer-${label.toLowerCase().replaceAll(' ', '-')}`} key={label} href={href} className="text-[10px] font-bold uppercase tracking-[.13em] text-[#a6b0a4] transition-colors hover:text-[#c3e12c]">{label}</a>)}</div></div>
-          <div className="flex flex-col justify-between gap-3 pt-6 font-mono-custom text-[9px] uppercase tracking-[.16em] text-[#748178] md:flex-row"><span>© 2024 Animora Studio Library</span><span>Made for the endlessly curious</span><a data-testid="link-back-to-top" href="#home" className="flex items-center gap-2 text-[#c3e12c]">Back to top <MoveUpRight size={12} /></a></div>
+          <div className="flex flex-col justify-between gap-3 pt-6 font-mono-custom text-[9px] uppercase tracking-[.16em] text-[#748178] md:flex-row">
+            <span>© 2024 Animora Studio Library</span>
+            <span>Made for the endlessly curious</span>
+            <div className="flex items-center gap-4">
+              <a href="/admin/login" className="text-[#a6b0a4] transition-colors hover:text-[#c3e12c]">Admin Portal</a>
+              <a data-testid="link-back-to-top" href="#home" className="flex items-center gap-2 text-[#c3e12c]">Back to top <MoveUpRight size={12} /></a>
+            </div>
+          </div>
         </div>
       </footer>
     </main>
