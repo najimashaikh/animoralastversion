@@ -3,6 +3,7 @@ import {
   ArrowDownRight,
   ArrowRight,
   Check,
+  ExternalLink,
   Film,
   Layers3,
   Menu,
@@ -221,14 +222,14 @@ function toYouTubeEmbedUrl(videoUrl: string) {
     const host = parsed.hostname.replace(/^www\./, '');
     let videoId = '';
 
-    if (host === 'youtube.com' || host === 'm.youtube.com') {
+    if (host === 'youtube.com' || host === 'm.youtube.com' || host === 'youtube-nocookie.com') {
       videoId = parsed.searchParams.get('v') ?? parsed.pathname.split('/').filter(Boolean).pop() ?? '';
     } else if (host === 'youtu.be') {
       videoId = parsed.pathname.split('/').filter(Boolean)[0] ?? '';
     }
 
     if (!/^[A-Za-z0-9_-]{6,}$/.test(videoId)) return null;
-    return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+    return `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
   } catch {
     return null;
   }
@@ -266,7 +267,19 @@ function VideoModal({
             </p>
             <h2 id="video-modal-title" className="mt-2 font-display text-2xl tracking-[-.05em] md:text-3xl">{video.title}</h2>
           </div>
-          <button data-testid="button-close-video-modal" aria-label="Close video player" onClick={onClose} className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#53665a] text-[#c3e12c] transition-colors hover:bg-[#c3e12c] hover:text-[#172520]"><X size={16} /></button>
+          <div className="flex items-center gap-3">
+            {video.videoUrl && (
+              <a
+                href={video.videoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden items-center gap-1.5 rounded-full border border-[#c3e12c] px-3.5 py-1.5 font-mono-custom text-[10px] uppercase tracking-[.12em] text-[#c3e12c] transition-colors hover:bg-[#c3e12c] hover:text-[#172520] sm:inline-flex"
+              >
+                Watch on YouTube <ExternalLink size={12} />
+              </a>
+            )}
+            <button data-testid="button-close-video-modal" aria-label="Close video player" onClick={onClose} className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#53665a] text-[#c3e12c] transition-colors hover:bg-[#c3e12c] hover:text-[#172520]"><X size={16} /></button>
+          </div>
         </div>
         <div className="bg-[#0d1914] p-3 md:p-6">
           {embedUrl ? (
@@ -277,14 +290,23 @@ function VideoModal({
                 title={video.title}
                 className="absolute inset-0 h-full w-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
                 allowFullScreen
               />
             </div>
           ) : (
             <div className="flex aspect-video flex-col items-center justify-center rounded-2xl border border-dashed border-[#53665a] bg-[#1e3028] px-6 text-center text-[#eff0dc]">
               <div className="grid h-14 w-14 place-items-center rounded-full border border-[#c3e12c] text-[#c3e12c]"><Play size={18} /></div>
-              <p className="mt-5 font-mono-custom text-[10px] uppercase tracking-[.2em] text-[#c3e12c]">Video unavailable</p>
-              <p className="mt-2 max-w-sm text-sm leading-6 text-[#aab5a8]">A verified video has not been configured yet.</p>
+              <p className="mt-5 font-mono-custom text-[10px] uppercase tracking-[.2em] text-[#c3e12c]">Watch on YouTube</p>
+              <p className="mt-2 max-w-sm text-sm leading-6 text-[#aab5a8]">Click below to open this tutorial directly on YouTube.</p>
+              <a
+                href={video.videoUrl || 'https://www.youtube.com'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#c3e12c] px-5 py-2.5 text-xs font-bold uppercase tracking-[.12em] text-[#172520] hover:bg-[#b0cb25]"
+              >
+                Open on YouTube <ExternalLink size={14} />
+              </a>
             </div>
           )}
         </div>
@@ -439,7 +461,7 @@ function App() {
             category: selectedTutorial.category,
             duration: selectedTutorial.duration,
             description: selectedTutorial.description,
-            videoUrl: selectedTutorial.videoUrl,
+            videoUrl: selectedTutorial.videoUrl || tutorialVideos[selectedTutorial.title] || 'https://www.youtube.com/watch?v=n_11DSOBmLc',
             badge: `${selectedTutorial.category} / TUTORIAL`,
           }}
           onClose={() => setSelectedTutorial(null)}
@@ -452,7 +474,7 @@ function App() {
             category: selectedCourse.category,
             duration: selectedCourse.meta,
             description: selectedCourse.desc,
-            videoUrl: selectedCourse.videoUrl,
+            videoUrl: selectedCourse.videoUrl || courseVideos[selectedCourse.title] || 'https://www.youtube.com/watch?v=haa7n3UGyDc',
             badge: `${selectedCourse.visual} / COURSE · ${selectedCourse.level}`,
           }}
           onClose={() => setSelectedCourse(null)}
@@ -566,10 +588,16 @@ function App() {
           <div className="mt-10 grid gap-4 md:grid-cols-2">
             {filteredTutorials.map((tutorial, index) => <article data-testid={`card-tutorial-${tutorial.id}`} key={tutorial.id} className="group overflow-hidden rounded-2xl border border-[#3a4c41] bg-[#1e3028] transition-colors hover:border-[#c3e12c]">
               <div className="flex flex-col gap-4 p-4 sm:flex-row">
-                <div className={`relative grid h-44 shrink-0 place-items-center overflow-hidden rounded-xl sm:h-28 sm:w-36 ${tutorial.color}`}>
+                <div
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Play ${tutorial.title}`}
+                  onClick={() => setSelectedTutorial(tutorial)}
+                  className={`group/thumb relative grid h-44 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-xl sm:h-28 sm:w-36 ${tutorial.color}`}
+                >
                   <img src={tutorial.thumbnail} alt="" className="absolute inset-0 h-full w-full object-cover opacity-35 mix-blend-multiply transition-transform duration-700 group-hover:scale-110" />
                   <span className="absolute inset-0 opacity-35 line-grid" />
-                  <span className="relative grid h-10 w-10 place-items-center rounded-full border border-[#172520] text-[#172520]"><Play size={13} fill="currentColor" /></span>
+                  <span className="relative grid h-10 w-10 place-items-center rounded-full border border-[#172520] text-[#172520] transition-transform group-hover/thumb:scale-110"><Play size={13} fill="currentColor" /></span>
                   <span className="absolute bottom-2 left-2 font-mono-custom text-[9px] font-bold text-[#172520]">{String(index + 1).padStart(2, '0')}</span>
                 </div>
                 <div className="min-w-0 flex-1">
