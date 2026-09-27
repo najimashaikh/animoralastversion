@@ -29,6 +29,29 @@ const categories = [
   { key: 'VFX', title: 'Visual effects', text: 'Composite, simulate and finish images that feel impossible.', tone: 'bg-[#d7d4c8]', mark: 'VX / SIGNAL', icon: Sparkles },
 ];
 
+const courseVideos: Record<string, string> = {
+  'Fundamentals of 2D Animation': 'https://www.youtube.com/watch?v=haa7n3UGyDc',
+  'Principles of Animation': 'https://www.youtube.com/watch?v=uDqjIdI4bF4',
+  'Character Animation': 'https://www.youtube.com/watch?v=n_11DSOBmLc',
+  'Storyboarding': 'https://www.youtube.com/watch?v=RQsvhq28sOI',
+  'Digital Illustration': 'https://www.youtube.com/watch?v=o34bBqN5s3k',
+  'Motion Graphics': 'https://www.youtube.com/watch?v=L2S4rS2qYHQ',
+  'Introduction to 3D Animation': 'https://www.youtube.com/watch?v=TPrnSACiTJ4',
+  '3D Modeling Fundamentals': 'https://www.youtube.com/watch?v=1kSVb-VEhNc',
+  'Texturing and Materials': 'https://www.youtube.com/watch?v=qveT_0oOq3A',
+  'Character Rigging': 'https://www.youtube.com/watch?v=f2hPweQeSms',
+  '3D Character Animation': 'https://www.youtube.com/watch?v=7uK2Z4L3B3k',
+  'Lighting and Rendering': 'https://www.youtube.com/watch?v=6r01z2a6xYk',
+  'Environment Design': 'https://www.youtube.com/watch?v=bO13b5v_F8M',
+  'Introduction to VFX': 'https://www.youtube.com/watch?v=o04_vYk3v0k',
+  'Compositing Fundamentals': 'https://www.youtube.com/watch?v=5mf6hP9Cnp8',
+  'Green Screen / Chroma Key': 'https://www.youtube.com/watch?v=k_l2k9R2xX8',
+  'Motion Tracking': 'https://www.youtube.com/watch?v=n5A9m-y4x3s',
+  'Particle Effects': 'https://www.youtube.com/watch?v=x7E2g2q1x4s',
+  'Cinematic Effects': 'https://www.youtube.com/watch?v=3g8L2k6y1v8',
+  'Color Grading': 'https://www.youtube.com/watch?v=9_zW5rC_2E4',
+};
+
 const courses = [
   ['2D', 'Fundamentals of 2D Animation'],
   ['2D', 'Principles of Animation'],
@@ -62,6 +85,7 @@ const courses = [
       : 'Learn the craft of compositing, simulation and finishing for images that feel fully realized.',
   meta: `${index % 3 + 6} lessons  ·  ${index % 2 ? '4h 20m' : '3h 40m'}`,
   visual: category,
+  videoUrl: courseVideos[title] ?? 'https://www.youtube.com/watch?v=haa7n3UGyDc',
 }));
 
 const tutorials = [
@@ -81,7 +105,7 @@ const tutorials = [
     description: 'A focused study in how spacing choices change the energy, weight and intent of a shot.',
     category: '2D',
     duration: '11 MIN',
-    videoUrl: '',
+    videoUrl: 'https://www.youtube.com/watch?v=uDqjIdI4bF4',
     thumbnail: '/animora-hero.jpg',
     color: 'bg-[#c9d1c0]',
   },
@@ -101,7 +125,7 @@ const tutorials = [
     description: 'Use the key, fill and shadow relationship to make a scene feel intentional before adding surface detail.',
     category: '3D',
     duration: '18 MIN',
-    videoUrl: '',
+    videoUrl: 'https://www.youtube.com/watch?v=6r01z2a6xYk',
     thumbnail: '/animora-art.jpg',
     color: 'bg-[#c3e12c]',
   },
@@ -121,7 +145,7 @@ const tutorials = [
     description: 'Track the world around a moving subject so digital elements inherit the same sense of place.',
     category: 'VFX',
     duration: '09 MIN',
-    videoUrl: '',
+    videoUrl: 'https://www.youtube.com/watch?v=n5A9m-y4x3s',
     thumbnail: '/animora-art.jpg',
     color: 'bg-[#d7d4c8]',
   },
@@ -131,7 +155,7 @@ const tutorials = [
     description: 'Bring a finished image together by shaping contrast, color relationships and the final feeling.',
     category: 'VFX',
     duration: '13 MIN',
-    videoUrl: '',
+    videoUrl: 'https://www.youtube.com/watch?v=9_zW5rC_2E4',
     thumbnail: '/animora-hero.jpg',
     color: 'bg-[#c9d1c0]',
   },
@@ -200,24 +224,39 @@ function toYouTubeEmbedUrl(videoUrl: string) {
   }
 }
 
-function VideoModal({ tutorial, onClose }: { tutorial: typeof tutorials[number]; onClose: () => void }) {
-  const embedUrl = toYouTubeEmbedUrl(tutorial.videoUrl);
+function VideoModal({
+  video,
+  onClose,
+}: {
+  video: {
+    title: string;
+    category?: string;
+    duration?: string;
+    description?: string;
+    videoUrl: string;
+    badge?: string;
+  };
+  onClose: () => void;
+}) {
+  const embedUrl = toYouTubeEmbedUrl(video.videoUrl);
 
   return (
     <div
       className="fixed inset-0 z-[80] flex items-center justify-center bg-[#0b1511]/90 p-4 backdrop-blur-sm md:p-8"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="tutorial-modal-title"
+      aria-labelledby="video-modal-title"
       onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}
     >
       <div className="relative w-full max-w-5xl overflow-hidden rounded-3xl border border-[#53665a] bg-[#172520] shadow-2xl shadow-black/60">
         <div className="flex items-start justify-between gap-5 border-b border-[#354a3d] px-5 py-4 text-[#eff0dc] md:px-7">
           <div className="min-w-0">
-            <p className="font-mono-custom text-[9px] uppercase tracking-[.2em] text-[#c3e12c]">{tutorial.category} / TUTORIAL · {tutorial.duration}</p>
-            <h2 id="tutorial-modal-title" className="mt-2 font-display text-2xl tracking-[-.05em] md:text-3xl">{tutorial.title}</h2>
+            <p className="font-mono-custom text-[9px] uppercase tracking-[.2em] text-[#c3e12c]">
+              {video.badge ?? `${video.category ?? 'VIDEO'} / LESSON`} {video.duration ? `· ${video.duration}` : ''}
+            </p>
+            <h2 id="video-modal-title" className="mt-2 font-display text-2xl tracking-[-.05em] md:text-3xl">{video.title}</h2>
           </div>
-          <button data-testid="button-close-tutorial-modal" aria-label="Close tutorial video" onClick={onClose} className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#53665a] text-[#c3e12c] transition-colors hover:bg-[#c3e12c] hover:text-[#172520]"><X size={16} /></button>
+          <button data-testid="button-close-video-modal" aria-label="Close video player" onClick={onClose} className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#53665a] text-[#c3e12c] transition-colors hover:bg-[#c3e12c] hover:text-[#172520]"><X size={16} /></button>
         </div>
         <div className="bg-[#0d1914] p-3 md:p-6">
           {embedUrl ? (
@@ -225,9 +264,9 @@ function VideoModal({ tutorial, onClose }: { tutorial: typeof tutorials[number];
               <iframe
                 key={embedUrl}
                 src={embedUrl}
-                title={tutorial.title}
+                title={video.title}
                 className="absolute inset-0 h-full w-full"
-                allow="autoplay; encrypted-media; picture-in-picture"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
               />
             </div>
@@ -235,12 +274,12 @@ function VideoModal({ tutorial, onClose }: { tutorial: typeof tutorials[number];
             <div className="flex aspect-video flex-col items-center justify-center rounded-2xl border border-dashed border-[#53665a] bg-[#1e3028] px-6 text-center text-[#eff0dc]">
               <div className="grid h-14 w-14 place-items-center rounded-full border border-[#c3e12c] text-[#c3e12c]"><Play size={18} /></div>
               <p className="mt-5 font-mono-custom text-[10px] uppercase tracking-[.2em] text-[#c3e12c]">Video unavailable</p>
-              <p className="mt-2 max-w-sm text-sm leading-6 text-[#aab5a8]">A verified video has not been configured for this tutorial yet. Check back when the lesson is published.</p>
+              <p className="mt-2 max-w-sm text-sm leading-6 text-[#aab5a8]">A verified video has not been configured yet.</p>
             </div>
           )}
         </div>
         <div className="flex flex-col gap-3 border-t border-[#354a3d] px-5 py-4 text-sm leading-6 text-[#aab5a8] md:flex-row md:items-center md:justify-between md:px-7">
-          <p className="max-w-xl">{tutorial.description}</p>
+          <p className="max-w-xl">{video.description}</p>
           {embedUrl && <span className="shrink-0 font-mono-custom text-[9px] uppercase tracking-[.16em] text-[#c3e12c]">Player controls: play / pause / fullscreen</span>}
         </div>
       </div>
@@ -302,6 +341,7 @@ function App() {
   const [problemCategoryFilter, setProblemCategoryFilter] = useState('ALL');
   const [problemDifficultyFilter, setProblemDifficultyFilter] = useState('ALL');
   const [selectedTutorial, setSelectedTutorial] = useState<typeof tutorials[number] | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<typeof courses[number] | null>(null);
   const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null);
   const [notice, setNotice] = useState('');
   const [courseItems, setCourseItems] = useState(courses);
@@ -329,6 +369,7 @@ function App() {
           desc: course.description,
           meta: course.duration,
           visual: course.category,
+          videoUrl: courseVideos[course.title] ?? 'https://www.youtube.com/watch?v=haa7n3UGyDc',
         })));
       }
       if (tutorialResponse.tutorials.length) {
@@ -380,7 +421,32 @@ function App() {
     <main className="grain overflow-hidden bg-[#ececdf] text-[#172520]">
       {notice && <div data-testid="status-notice" className="fixed bottom-5 left-1/2 z-[90] -translate-x-1/2 rounded-full bg-[#c3e12c] px-5 py-3 text-xs font-bold shadow-xl">{notice}</div>}
       {contentError && <div className="fixed left-1/2 top-[86px] z-30 -translate-x-1/2 rounded-full border border-[#d2b06a] bg-[#fff4cf] px-4 py-2 text-[11px] font-semibold text-[#5a4c24] shadow-lg">{contentError}</div>}
-      {selectedTutorial && <VideoModal tutorial={selectedTutorial} onClose={() => setSelectedTutorial(null)} />}
+      {selectedTutorial && (
+        <VideoModal
+          video={{
+            title: selectedTutorial.title,
+            category: selectedTutorial.category,
+            duration: selectedTutorial.duration,
+            description: selectedTutorial.description,
+            videoUrl: selectedTutorial.videoUrl,
+            badge: `${selectedTutorial.category} / TUTORIAL`,
+          }}
+          onClose={() => setSelectedTutorial(null)}
+        />
+      )}
+      {selectedCourse && (
+        <VideoModal
+          video={{
+            title: selectedCourse.title,
+            category: selectedCourse.category,
+            duration: selectedCourse.meta,
+            description: selectedCourse.desc,
+            videoUrl: selectedCourse.videoUrl,
+            badge: `${selectedCourse.visual} / COURSE · ${selectedCourse.level}`,
+          }}
+          onClose={() => setSelectedCourse(null)}
+        />
+      )}
       {selectedProblem && <ProblemModal problem={selectedProblem} onClose={() => setSelectedProblem(null)} />}
       <header className="fixed left-0 right-0 top-0 z-40 border-b border-[#d0d2c3]/70 bg-[#ececdf]/90 backdrop-blur-xl">
         <div className="mx-auto flex h-[74px] max-w-[1380px] items-center justify-between px-5 md:px-10">
@@ -473,9 +539,9 @@ function App() {
               <div className="absolute inset-0 bg-gradient-to-t from-[#172520]/80 to-transparent" />
               <span className="absolute left-5 top-5 rounded-full border border-white/30 px-3 py-1 font-mono-custom text-[9px] tracking-[.18em] text-white">{course.level}</span>
               <span className="absolute bottom-5 left-5 font-mono-custom text-[10px] tracking-[.18em] text-[#c3e12c]">{course.visual} / COURSE</span>
-              <button data-testid={`button-play-course-${course.id}`} aria-label={`Preview ${course.title}`} onClick={() => showNotice(`Preview queued: ${course.title}`)} className="absolute bottom-4 right-5 grid h-11 w-11 place-items-center rounded-full bg-[#c3e12c] text-[#172520] transition-transform hover:scale-110"><Play size={15} fill="currentColor" /></button>
+              <button data-testid={`button-play-course-${course.id}`} aria-label={`Watch ${course.title}`} onClick={() => setSelectedCourse(course)} className="absolute bottom-4 right-5 grid h-11 w-11 place-items-center rounded-full bg-[#c3e12c] text-[#172520] transition-transform hover:scale-110"><Play size={15} fill="currentColor" /></button>
             </div>
-            <div className="p-6"><h3 className="font-display text-2xl font-semibold tracking-[-.05em]">{course.title}</h3><p className="mt-3 text-sm leading-5 text-[#626a62]">{course.desc}</p><div className="mt-6 flex items-center justify-between border-t border-[#d5d6ca] pt-4 font-mono-custom text-[10px] text-[#70766d]"><span>{course.meta}</span><button data-testid={`button-open-course-${course.id}`} onClick={() => showNotice(`Course details selected: ${course.title}`)} className="flex items-center gap-1 font-bold text-[#172520]">VIEW <ArrowRight size={13} /></button></div></div>
+            <div className="p-6"><h3 className="font-display text-2xl font-semibold tracking-[-.05em]">{course.title}</h3><p className="mt-3 text-sm leading-5 text-[#626a62]">{course.desc}</p><div className="mt-6 flex items-center justify-between border-t border-[#d5d6ca] pt-4 font-mono-custom text-[10px] text-[#70766d]"><span>{course.meta}</span><button data-testid={`button-open-course-${course.id}`} onClick={() => setSelectedCourse(course)} className="flex items-center gap-1 font-bold text-[#172520] transition-colors hover:text-[#7a8816]">WATCH COURSE <ArrowRight size={13} /></button></div></div>
           </article>)}
         </div>
       </section>
