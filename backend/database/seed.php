@@ -52,12 +52,12 @@ try {
 
     $tutorialRows = [
         ['Walk Cycle: Making Motion Read', 'Build a readable walk cycle by finding the contact, passing and weight-bearing poses first.', '2D', '14 MIN', 'https://www.youtube.com/watch?v=n_11DSOBmLc', '/animora-art.jpg'],
-        ['Timing and Spacing in Practice', 'A focused study in how spacing choices change the energy, weight and intent of a shot.', '2D', '11 MIN', '', '/animora-hero.jpg'],
+        ['Timing and Spacing in Practice', 'A focused study in how spacing choices change the energy, weight and intent of a shot.', '2D', '11 MIN', 'https://www.youtube.com/watch?v=uDqjIdI4bF4', '/animora-hero.jpg'],
         ['3D Modeling Tutorial', 'Start with clean forms and a simple blockout, then build a model that is ready for detail.', '3D', '22 MIN', 'https://www.youtube.com/watch?v=1kSVb-VEhNc', '/animora-hero.jpg'],
-        ['Light Before Texture', 'Use the key, fill and shadow relationship to make a scene feel intentional before adding surface detail.', '3D', '18 MIN', '', '/animora-art.jpg'],
+        ['Light Before Texture', 'Use the key, fill and shadow relationship to make a scene feel intentional before adding surface detail.', '3D', '18 MIN', 'https://www.youtube.com/watch?v=O2H1CUh1Zh4', '/animora-art.jpg'],
         ['Green Screen: A Cleaner Composite', 'Key a green screen, match the light and integrate the subject into a believable plate.', 'VFX', '16 MIN', 'https://www.youtube.com/watch?v=5mf6hP9Cnp8', '/animora-hero.jpg'],
-        ['Motion Tracking Basics', 'Track the world around a moving subject so digital elements inherit the same sense of place.', 'VFX', '09 MIN', '', '/animora-art.jpg'],
-        ['Color Grading the Final Shot', 'Bring a finished image together by shaping contrast, color relationships and the final feeling.', 'VFX', '13 MIN', '', '/animora-hero.jpg'],
+        ['Motion Tracking Basics', 'Track the world around a moving subject so digital elements inherit the same sense of place.', 'VFX', '09 MIN', 'https://www.youtube.com/watch?v=I5_TTAhPrxI', '/animora-art.jpg'],
+        ['Color Grading the Final Shot', 'Bring a finished image together by shaping contrast, color relationships and the final feeling.', 'VFX', '13 MIN', 'https://www.youtube.com/watch?v=J1P1XZKieiA', '/animora-hero.jpg'],
     ];
     $tutorialStatement = $database->prepare(
         'INSERT INTO tutorials (title, description, category, duration, video_url, thumbnail)
