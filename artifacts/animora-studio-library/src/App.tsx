@@ -42,178 +42,9 @@ const categories = [
   { key: 'VFX', title: 'Visual effects', text: 'Composite, simulate and finish images that feel impossible.', tone: 'bg-[#d7d4c8]', mark: 'VX / SIGNAL', icon: Sparkles },
 ];
 
-const courseVideos: Record<string, string> = {
-  'Fundamentals of 2D Animation': 'https://www.youtube.com/watch?v=haa7n3UGyDc',
-  'Principles of Animation': 'https://www.youtube.com/watch?v=uDqjIdI4bF4',
-  'Character Animation': 'https://www.youtube.com/watch?v=n_11DSOBmLc',
-  'Storyboarding': 'https://www.youtube.com/watch?v=RQsvhq28sOI',
-  'Digital Illustration': 'https://www.youtube.com/watch?v=bsmgbh58nNw',
-  'Motion Graphics': 'https://www.youtube.com/watch?v=5tQ0hf2SCeo',
-  'Introduction to 3D Animation': 'https://www.youtube.com/watch?v=TPrnSACiTJ4',
-  '3D Modeling Fundamentals': 'https://www.youtube.com/watch?v=1kSVb-VEhNc',
-  'Texturing and Materials': 'https://www.youtube.com/watch?v=KMjTLE0z80k',
-  'Character Rigging': 'https://www.youtube.com/watch?v=2nlMZx0vp6E',
-  '3D Character Animation': 'https://www.youtube.com/watch?v=UtLku74CvXQ',
-  'Lighting and Rendering': 'https://www.youtube.com/watch?v=O2H1CUh1Zh4',
-  'Environment Design': 'https://www.youtube.com/watch?v=RGDR9DW_mQg',
-  'Introduction to VFX': 'https://www.youtube.com/watch?v=HrdqH1kjroI',
-  'Compositing Fundamentals': 'https://www.youtube.com/watch?v=5mf6hP9Cnp8',
-  'Green Screen / Chroma Key': 'https://www.youtube.com/watch?v=_a3wR955LW8',
-  'Motion Tracking': 'https://www.youtube.com/watch?v=I5_TTAhPrxI',
-  'Particle Effects': 'https://www.youtube.com/watch?v=7Fp9207Ds5I',
-  'Cinematic Effects': 'https://www.youtube.com/watch?v=x7mpMztkl5I',
-  'Color Grading': 'https://www.youtube.com/watch?v=J1P1XZKieiA',
-};
-
-const tutorialVideos: Record<string, string> = {
-  'Walk Cycle: Making Motion Read': 'https://www.youtube.com/watch?v=n_11DSOBmLc',
-  'Timing and Spacing in Practice': 'https://www.youtube.com/watch?v=uDqjIdI4bF4',
-  '3D Modeling Tutorial': 'https://www.youtube.com/watch?v=1kSVb-VEhNc',
-  'Light Before Texture': 'https://www.youtube.com/watch?v=O2H1CUh1Zh4',
-  'Green Screen: A Cleaner Composite': 'https://www.youtube.com/watch?v=5mf6hP9Cnp8',
-  'Motion Tracking Basics': 'https://www.youtube.com/watch?v=I5_TTAhPrxI',
-  'Color Grading the Final Shot': 'https://www.youtube.com/watch?v=J1P1XZKieiA',
-};
-
-const courses = [
-  ['2D', 'Fundamentals of 2D Animation'],
-  ['2D', 'Principles of Animation'],
-  ['2D', 'Character Animation'],
-  ['2D', 'Storyboarding'],
-  ['2D', 'Digital Illustration'],
-  ['2D', 'Motion Graphics'],
-  ['3D', 'Introduction to 3D Animation'],
-  ['3D', '3D Modeling Fundamentals'],
-  ['3D', 'Texturing and Materials'],
-  ['3D', 'Character Rigging'],
-  ['3D', '3D Character Animation'],
-  ['3D', 'Lighting and Rendering'],
-  ['3D', 'Environment Design'],
-  ['VFX', 'Introduction to VFX'],
-  ['VFX', 'Compositing Fundamentals'],
-  ['VFX', 'Green Screen / Chroma Key'],
-  ['VFX', 'Motion Tracking'],
-  ['VFX', 'Particle Effects'],
-  ['VFX', 'Cinematic Effects'],
-  ['VFX', 'Color Grading'],
-].map(([category, title], index) => ({
-  id: `course-${index + 1}`,
-  category,
-  level: index < 6 ? 'FOUNDATION' : index < 13 ? 'INTERMEDIATE' : 'WORKSHOP',
-  title,
-  desc: category === '2D'
-    ? 'Build a clear visual language through timing, drawing, posing and intentional movement.'
-    : category === '3D'
-      ? 'Develop dimensional thinking from first blockout through camera, light, material and motion.'
-      : 'Learn the craft of compositing, simulation and finishing for images that feel fully realized.',
-  meta: `${index % 3 + 6} lessons  ·  ${index % 2 ? '4h 20m' : '3h 40m'}`,
-  visual: category,
-  videoUrl: courseVideos[title] ?? 'https://www.youtube.com/watch?v=haa7n3UGyDc',
-}));
-
-const tutorials = [
-  {
-    id: 'tut-walk-cycle',
-    title: 'Walk Cycle: Making Motion Read',
-    description: 'Build a readable walk cycle by finding the contact, passing and weight-bearing poses first.',
-    category: '2D',
-    duration: '14 MIN',
-    videoUrl: 'https://www.youtube.com/watch?v=n_11DSOBmLc',
-    thumbnail: '/animora-art.jpg',
-    color: 'bg-[#d7d4c8]',
-  },
-  {
-    id: 'tut-timing-spacing',
-    title: 'Timing and Spacing in Practice',
-    description: 'A focused study in how spacing choices change the energy, weight and intent of a shot.',
-    category: '2D',
-    duration: '11 MIN',
-    videoUrl: 'https://www.youtube.com/watch?v=uDqjIdI4bF4',
-    thumbnail: '/animora-hero.jpg',
-    color: 'bg-[#c9d1c0]',
-  },
-  {
-    id: 'tut-3d-modeling',
-    title: '3D Modeling Tutorial',
-    description: 'Start with clean forms and a simple blockout, then build a model that is ready for detail.',
-    category: '3D',
-    duration: '22 MIN',
-    videoUrl: 'https://www.youtube.com/watch?v=1kSVb-VEhNc',
-    thumbnail: '/animora-hero.jpg',
-    color: 'bg-[#e2e5a9]',
-  },
-  {
-    id: 'tut-light-texture',
-    title: 'Light Before Texture',
-    description: 'Use the key, fill and shadow relationship to make a scene feel intentional before adding surface detail.',
-    category: '3D',
-    duration: '18 MIN',
-    videoUrl: 'https://www.youtube.com/watch?v=O2H1CUh1Zh4',
-    thumbnail: '/animora-art.jpg',
-    color: 'bg-[#c3e12c]',
-  },
-  {
-    id: 'tut-green-screen',
-    title: 'Green Screen: A Cleaner Composite',
-    description: 'Key a green screen, match the light and integrate the subject into a believable plate.',
-    category: 'VFX',
-    duration: '16 MIN',
-    videoUrl: 'https://www.youtube.com/watch?v=5mf6hP9Cnp8',
-    thumbnail: '/animora-hero.jpg',
-    color: 'bg-[#c3e12c]',
-  },
-  {
-    id: 'tut-motion-tracking',
-    title: 'Motion Tracking Basics',
-    description: 'Track the world around a moving subject so digital elements inherit the same sense of place.',
-    category: 'VFX',
-    duration: '09 MIN',
-    videoUrl: 'https://www.youtube.com/watch?v=I5_TTAhPrxI',
-    thumbnail: '/animora-art.jpg',
-    color: 'bg-[#d7d4c8]',
-  },
-  {
-    id: 'tut-color-grade',
-    title: 'Color Grading the Final Shot',
-    description: 'Bring a finished image together by shaping contrast, color relationships and the final feeling.',
-    category: 'VFX',
-    duration: '13 MIN',
-    videoUrl: 'https://www.youtube.com/watch?v=J1P1XZKieiA',
-    thumbnail: '/animora-hero.jpg',
-    color: 'bg-[#c9d1c0]',
-  },
-];
-
-type Problem = {
-  id: string;
-  category: '2D' | '3D' | 'VFX';
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
-  title: string;
-  problem: string;
-  task: string;
-  hint: string;
-  solution: string;
-  relatedCourse: string;
-  relatedTutorial: string;
-};
-
-const problems: Problem[] = [
-  { id: 'problem-character-movement', category: '2D', difficulty: 'Beginner', title: 'Character Movement', problem: 'Your character moves, but the action has no clear direction or weight.', task: 'Create a short movement with a readable beginning, change of direction and finish.', hint: 'Thumbnail the strongest silhouette before refining any drawing.', solution: 'Anchor the motion with a clear line of action, then use extreme and breakdown poses to keep the change visible.', relatedCourse: 'Principles of Animation', relatedTutorial: 'Timing and Spacing in Practice' },
-  { id: 'problem-walk-cycle', category: '2D', difficulty: 'Beginner', title: 'Walk Cycle', problem: 'The walk feels like sliding instead of a character carrying weight through space.', task: 'Animate a looping walk with clear contact, passing and push-off poses.', hint: 'Check the feet first: the contact foot should stay planted while the body travels over it.', solution: 'Use a consistent contact distance, offset the hips and shoulders, and make the spacing widen as the body pushes into the next step.', relatedCourse: 'Character Animation', relatedTutorial: 'Walk Cycle: Making Motion Read' },
-  { id: 'problem-timing-spacing', category: '2D', difficulty: 'Intermediate', title: 'Timing and Spacing', problem: 'The poses are correct, but the action still feels flat and evenly paced.', task: 'Revise a short shot so the viewer can feel acceleration, impact and settle.', hint: 'Do not add frames everywhere. Remove or cluster them to change the rhythm.', solution: 'Use wider spacing for speed, tighter spacing for held moments and a deliberate contrast at the story beat that matters most.', relatedCourse: 'Principles of Animation', relatedTutorial: 'Timing and Spacing in Practice' },
-  { id: 'problem-lip-sync', category: '2D', difficulty: 'Advanced', title: 'Lip Sync', problem: 'The mouth shapes match the audio, but the dialogue does not feel connected to the character.', task: 'Animate a short line with clear phonemes and a believable performance.', hint: 'Listen for the thought behind the words, not only the individual sounds.', solution: 'Place the important vowel shapes on stressed syllables, add small anticipation and settle, and let the eyes and head support the line.', relatedCourse: 'Character Animation', relatedTutorial: 'Timing and Spacing in Practice' },
-  { id: 'problem-keyframe', category: '2D', difficulty: 'Intermediate', title: 'Keyframe', problem: 'The key poses communicate the idea, but the in-between motion loses the intent.', task: 'Create a clean keyframe pass for a single expressive action.', hint: 'If the silhouette does not read in a thumbnail, more in-betweens will not fix it.', solution: 'Clarify the line of action and hierarchy in the keys first, then choose breakdowns that preserve the force of the movement.', relatedCourse: 'Fundamentals of 2D Animation', relatedTutorial: 'Timing and Spacing in Practice' },
-  { id: 'problem-modeling', category: '3D', difficulty: 'Beginner', title: '3D Modeling', problem: 'The model has surface detail, but the primary forms do not feel convincing.', task: 'Block out a simple prop using clean proportions and readable planes.', hint: 'Judge the silhouette from a distance before adding bevels or texture.', solution: 'Work from large to small, keep the topology supporting the form, and check the object under a neutral light before polishing.', relatedCourse: '3D Modeling Fundamentals', relatedTutorial: '3D Modeling Tutorial' },
-  { id: 'problem-rigging', category: '3D', difficulty: 'Intermediate', title: 'Rigging', problem: 'The controls technically work, but the character bends in ways that break the form.', task: 'Build a simple rig with stable deformation through one clear pose change.', hint: 'Test extreme poses early instead of waiting until the rig feels finished.', solution: 'Place joints based on the intended deformation, use clean weight ranges, and add only the controls that make the motion easier to direct.', relatedCourse: 'Character Rigging', relatedTutorial: '3D Modeling Fundamentals' },
-  { id: 'problem-character-animation', category: '3D', difficulty: 'Advanced', title: 'Character Animation', problem: 'The character hits the key poses, but the performance feels mechanical.', task: 'Animate a short acting beat with a clear intention and change.', hint: 'Give the body a thought to react to before the limbs begin to move.', solution: 'Lead with the idea, offset the body parts, and use asymmetry and holds to create a performance rather than a sequence of controls.', relatedCourse: '3D Character Animation', relatedTutorial: 'Walk Cycle: Making Motion Read' },
-  { id: 'problem-lighting', category: '3D', difficulty: 'Intermediate', title: 'Lighting', problem: 'The scene is technically bright, but the focal point and depth are unclear.', task: 'Light a shot with a clear subject hierarchy and readable separation.', hint: 'Start with one motivated key light before adding fill or rim light.', solution: 'Use the key to establish direction, preserve shadow shape, then add restrained fill so the eye lands where the story needs it.', relatedCourse: 'Lighting and Rendering', relatedTutorial: 'Light Before Texture' },
-  { id: 'problem-rendering', category: '3D', difficulty: 'Advanced', title: 'Rendering', problem: 'The final render looks different from the viewport and loses the intended mood.', task: 'Prepare a consistent render with correct color management and a deliberate finish.', hint: 'Compare the same frame, exposure and color space before changing the lighting.', solution: 'Lock the camera and render settings, preview at a small resolution, and make one controlled change at a time so the final image stays predictable.', relatedCourse: 'Lighting and Rendering', relatedTutorial: 'Light Before Texture' },
-  { id: 'problem-green-screen', category: 'VFX', difficulty: 'Beginner', title: 'Green Screen', problem: 'The key is clean around the subject, but the composite still feels pasted on.', task: 'Key a subject and place it into a new plate with believable edges and light.', hint: 'Solve spill and edge color before trying to hide the composite with a heavy grade.', solution: 'Refine the matte, despill the edges, match the direction and softness of the plate light, then add shared grain and motion blur.', relatedCourse: 'Compositing Fundamentals', relatedTutorial: 'Green Screen: A Cleaner Composite' },
-  { id: 'problem-motion-tracking', category: 'VFX', difficulty: 'Intermediate', title: 'Motion Tracking', problem: 'A tracked element drifts even though the tracker says the solve is successful.', task: 'Attach a digital element to a moving plate without visible sliding.', hint: 'Track a high-contrast feature that belongs to the same plane as the element.', solution: 'Use multiple points when needed, remove bad tracks, solve the correct plane and check the composite at full speed rather than only frame by frame.', relatedCourse: 'Motion Tracking', relatedTutorial: 'Motion Tracking Basics' },
-  { id: 'problem-compositing', category: 'VFX', difficulty: 'Advanced', title: 'Compositing', problem: 'The layers are aligned, but the final image lacks the small cues that make it feel photographed together.', task: 'Integrate a generated element into live-action footage with consistent depth and atmosphere.', hint: 'Match the imperfections: lens softness, grain, shadow and color response.', solution: 'Build the composite in passes, match perspective and light first, then finish with shared optical treatment so every layer belongs to the same image.', relatedCourse: 'Compositing Fundamentals', relatedTutorial: 'Green Screen: A Cleaner Composite' },
-  { id: 'problem-particle-effects', category: 'VFX', difficulty: 'Intermediate', title: 'Particle Effects', problem: 'The particles add activity but do not feel connected to the scene or the force driving them.', task: 'Create a controlled particle pass that supports the action without becoming visual noise.', hint: 'Define the source, force and lifespan before choosing the look.', solution: 'Shape the emission over time, vary scale and velocity with purpose, then integrate the pass with depth, motion blur and the scene light.', relatedCourse: 'Particle Effects', relatedTutorial: 'Motion Tracking Basics' },
-  { id: 'problem-color-grading', category: 'VFX', difficulty: 'Advanced', title: 'Color Grading', problem: 'The grade is dramatic, but skin, highlights and the story focus are no longer trustworthy.', task: 'Finish a shot with a controlled palette that supports mood and continuity.', hint: 'Protect the neutral references before pushing the creative look.', solution: 'Balance exposure first, isolate the focal range, then shape contrast and hue relationships while checking the shot beside its neighboring frames.', relatedCourse: 'Color Grading', relatedTutorial: 'Color Grading the Final Shot' },
-];
+type Problem = ProblemItem;
+type Course = CourseItem;
+type Tutorial = TutorialItem;
 
 function SectionHeading({ eyebrow, title, detail, inverse = false }: { eyebrow: string; title: string; detail?: string; inverse?: boolean }) {
   return (
@@ -384,13 +215,13 @@ function App() {
   const [tutorialFilter, setTutorialFilter] = useState('ALL');
   const [problemCategoryFilter, setProblemCategoryFilter] = useState('ALL');
   const [problemDifficultyFilter, setProblemDifficultyFilter] = useState('ALL');
-  const [selectedTutorial, setSelectedTutorial] = useState<typeof tutorials[number] | null>(null);
-  const [selectedCourse, setSelectedCourse] = useState<typeof courses[number] | null>(null);
-  const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null);
+  const [selectedTutorial, setSelectedTutorial] = useState<TutorialItem | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<CourseItem | null>(null);
+  const [selectedProblem, setSelectedProblem] = useState<ProblemItem | null>(null);
   const [notice, setNotice] = useState('');
-  const [courseItems, setCourseItems] = useState(courses);
-  const [tutorialItems, setTutorialItems] = useState(tutorials);
-  const [problemItems, setProblemItems] = useState(problems);
+  const [courseItems, setCourseItems] = useState<CourseItem[]>([]);
+  const [tutorialItems, setTutorialItems] = useState<TutorialItem[]>([]);
+  const [problemItems, setProblemItems] = useState<ProblemItem[]>([]);
   const [sessionUser, setSessionUser] = useState<{ name: string; email: string; role: 'user' | 'admin' } | null>(null);
   const [contact, setContact] = useState({ name: '', email: '', subject: '', message: '' });
   const [isContactSubmitting, setIsContactSubmitting] = useState(false);
@@ -398,33 +229,16 @@ function App() {
 
   useEffect(() => {
     let active = true;
+
     Promise.all([
-      apiFetch<{ courses: Array<{ id: number; title: string; description: string; category: '2D' | '3D' | 'VFX'; level: string; duration: string }> }>('/courses'),
-      apiFetch<{ tutorials: Array<{ id: number; title: string; description: string; category: '2D' | '3D' | 'VFX'; duration: string; videoUrl: string; thumbnail: string }> }>('/tutorials'),
-      apiFetch<{ problems: Problem[] }>('/problems'),
-    ]).then(([courseResponse, tutorialResponse, problemResponse]) => {
+      fetchCoursesFromDb(),
+      fetchTutorialsFromDb(),
+      fetchProblemsFromDb(),
+    ]).then(([courseData, tutorialData, problemData]) => {
       if (!active) return;
-      if (courseResponse.courses.length) {
-        setCourseItems(courseResponse.courses.map((course) => ({
-          id: `course-${course.id}`,
-          category: course.category,
-          level: course.level,
-          title: course.title,
-          desc: course.description,
-          meta: course.duration,
-          visual: course.category,
-          videoUrl: courseVideos[course.title] ?? 'https://www.youtube.com/watch?v=haa7n3UGyDc',
-        })));
-      }
-      if (tutorialResponse.tutorials.length) {
-        setTutorialItems(tutorialResponse.tutorials.map((tutorial) => ({
-          ...tutorial,
-          videoUrl: tutorial.videoUrl || tutorialVideos[tutorial.title] || 'https://www.youtube.com/watch?v=haa7n3UGyDc',
-          id: `tutorial-${tutorial.id}`,
-          color: tutorial.category === '3D' ? 'bg-[#e2e5a9]' : tutorial.category === 'VFX' ? 'bg-[#c3e12c]' : 'bg-[#d7d4c8]',
-        })));
-      }
-      if (problemResponse.problems.length) setProblemItems(problemResponse.problems);
+      if (courseData.length) setCourseItems(courseData);
+      if (tutorialData.length) setTutorialItems(tutorialData);
+      if (problemData.length) setProblemItems(problemData);
     }).catch(() => {
       if (active) setContentError('Live library content is unavailable. Showing the latest local catalog.');
     });
@@ -496,7 +310,7 @@ function App() {
             category: selectedTutorial.category,
             duration: selectedTutorial.duration,
             description: selectedTutorial.description,
-            videoUrl: selectedTutorial.videoUrl || tutorialVideos[selectedTutorial.title] || 'https://www.youtube.com/watch?v=n_11DSOBmLc',
+            videoUrl: selectedTutorial.videoUrl,
             badge: `${selectedTutorial.category} / TUTORIAL`,
           }}
           onClose={() => setSelectedTutorial(null)}
@@ -507,10 +321,10 @@ function App() {
           video={{
             title: selectedCourse.title,
             category: selectedCourse.category,
-            duration: selectedCourse.meta,
-            description: selectedCourse.desc,
-            videoUrl: selectedCourse.videoUrl || courseVideos[selectedCourse.title] || 'https://www.youtube.com/watch?v=haa7n3UGyDc',
-            badge: `${selectedCourse.visual} / COURSE · ${selectedCourse.level}`,
+            duration: selectedCourse.duration || selectedCourse.meta,
+            description: selectedCourse.description || selectedCourse.desc,
+            videoUrl: selectedCourse.videoUrl,
+            badge: `${selectedCourse.category || selectedCourse.visual} / COURSE · ${selectedCourse.level}`,
           }}
           onClose={() => setSelectedCourse(null)}
         />
