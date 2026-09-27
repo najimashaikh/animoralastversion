@@ -14,6 +14,28 @@ if ($path === '//') {
 }
 
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+$allowedOrigins = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:5000',
+    'http://127.0.0.1:5000',
+];
+if ($origin !== '' && in_array($origin, $allowedOrigins, true)) {
+    header('Access-Control-Allow-Origin: ' . $origin);
+    header('Access-Control-Allow-Credentials: true');
+    header('Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept');
+}
+
+if ($method === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
+
 $routes = [
     'POST /auth/register' => __DIR__ . '/../api/auth/register.php',
     'POST /auth/login' => __DIR__ . '/../api/auth/login.php',

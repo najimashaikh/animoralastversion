@@ -113,8 +113,8 @@ try {
         ]);
     }
 
-    $adminEmail = env_value('ANIMORA_ADMIN_EMAIL');
-    $adminPassword = env_value('ANIMORA_ADMIN_PASSWORD');
+    $adminEmail = env_value('ANIMORA_ADMIN_EMAIL', 'admin@animora.local');
+    $adminPassword = env_value('ANIMORA_ADMIN_PASSWORD', 'Admin@12345');
     if ($adminEmail !== null && $adminPassword !== null && filter_var($adminEmail, FILTER_VALIDATE_EMAIL) && strlen($adminPassword) >= 8) {
         $adminStatement = $database->prepare(
             'INSERT INTO users (name, email, password_hash, role)
@@ -128,6 +128,7 @@ try {
             'password_hash' => password_hash($adminPassword, PASSWORD_DEFAULT),
             'role' => 'admin',
         ]);
+        echo "Default admin user ready: {$adminEmail}\n";
     }
 
     $database->commit();
