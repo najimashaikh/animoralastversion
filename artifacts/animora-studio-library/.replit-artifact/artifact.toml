@@ -26,3 +26,20 @@ to = "/index.html"
 [services.env]
 PORT = "19122"
 BASE_PATH = "/"
+
+[[services]]
+name = "php-api"
+paths = [ "/animora-api" ]
+localPort = 8000
+
+[services.development]
+run = "php -S 0.0.0.0:8000 -t ../../backend/public ../../backend/public/router.php"
+
+[services.production]
+
+[services.production.run]
+args = [ "php", "-S", "0.0.0.0:8000", "-t", "../../backend/public", "../../backend/public/router.php" ]
+
+[services.production.run.env]
+PORT = "8000"
+BASE_PATH = "/animora-api"

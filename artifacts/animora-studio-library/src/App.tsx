@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import {
   ArrowDownRight,
   ArrowRight,
@@ -11,6 +11,7 @@ import {
   Sparkles,
   X,
 } from 'lucide-react';
+import { ApiError, apiFetch } from '@/lib/api';
 
 const navItems = [
   ['Home', '#home'],
@@ -303,19 +304,82 @@ function App() {
   const [selectedTutorial, setSelectedTutorial] = useState<typeof tutorials[number] | null>(null);
   const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null);
   const [notice, setNotice] = useState('');
-  const [email, setEmail] = useState('');
+  const [courseItems, setCourseItems] = useState(courses);
+  const [tutorialItems, setTutorialItems] = useState(tutorials);
+  const [problemItems, setProblemItems] = useState(problems);
+  const [sessionUser, setSessionUser] = useState<{ name: string; email: string; role: 'user' | 'admin' } | null>(null);
+  const [contact, setContact] = useState({ name: '', email: '', subject: '', message: '' });
+  const [isContactSubmitting, setIsContactSubmitting] = useState(false);
+  const [contentError, setContentError] = useState('');
 
-  const filteredCourses = courseFilter === 'ALL' ? courses : courses.filter((course) => course.category === courseFilter);
-  const filteredTutorials = tutorialFilter === 'ALL' ? tutorials : tutorials.filter((tutorial) => tutorial.category === tutorialFilter);
-  const filteredProblems = problems.filter((problem) => (problemCategoryFilter === 'ALL' || problem.category === problemCategoryFilter) && (problemDifficultyFilter === 'ALL' || problem.difficulty === problemDifficultyFilter));
+  useEffect(() => {
+    let active = true;
+    Promise.all([
+      apiFetch<{ courses: Array<{ id: number; title: string; description: string; category: '2D' | '3D' | 'VFX'; level: string; duration: string }> }>('/courses'),
+      apiFetch<{ tutorials: Array<{ id: number; title: string; description: string; category: '2D' | '3D' | 'VFX'; duration: string; videoUrl: string; thumbnail: string }> }>('/tutorials'),
+      apiFetch<{ problems: Problem[] }>('/problems'),
+    ]).then(([courseResponse, tutorialResponse, problemResponse]) => {
+      if (!active) return;
+      if (courseResponse.courses.length) {
+        setCourseItems(courseResponse.courses.map((course) => ({
+          id: `course-${course.id}`,
+          category: course.category,
+          level: course.level,
+          title: course.title,
+          desc: course.description,
+          meta: course.duration,
+          visual: course.category,
+        })));
+      }
+      if (tutorialResponse.tutorials.length) {
+        setTutorialItems(tutorialResponse.tutorials.map((tutorial) => ({
+          ...tutorial,
+          id: `tutorial-${tutorial.id}`,
+          color: tutorial.category === '3D' ? 'bg-[#e2e5a9]' : tutorial.category === 'VFX' ? 'bg-[#c3e12c]' : 'bg-[#d7d4c8]',
+        })));
+      }
+      if (problemResponse.problems.length) setProblemItems(problemResponse.problems);
+    }).catch(() => {
+      if (active) setContentError('Live library content is unavailable. Showing the latest local catalog.');
+    });
+
+    apiFetch<{ user: { name: string; email: string; role: 'user' | 'admin' } }>('/auth/me')
+      .then((response) => { if (active) setSessionUser(response.user); })
+      .catch(() => undefined);
+
+    return () => { active = false; };
+  }, []);
+
+  const filteredCourses = courseFilter === 'ALL' ? courseItems : courseItems.filter((course) => course.category === courseFilter);
+  const filteredTutorials = tutorialFilter === 'ALL' ? tutorialItems : tutorialItems.filter((tutorial) => tutorial.category === tutorialFilter);
+  const filteredProblems = problemItems.filter((problem) => (problemCategoryFilter === 'ALL' || problem.category === problemCategoryFilter) && (problemDifficultyFilter === 'ALL' || problem.difficulty === problemDifficultyFilter));
   const showNotice = (message: string) => {
     setNotice(message);
     window.setTimeout(() => setNotice(''), 3000);
   };
+  const handleLogout = async () => {
+    await apiFetch('/auth/logout', { method: 'POST' }).catch(() => undefined);
+    setSessionUser(null);
+    showNotice('You have been logged out.');
+  };
+  const submitContact = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsContactSubmitting(true);
+    try {
+      await apiFetch('/contact-messages', { method: 'POST', body: JSON.stringify(contact) });
+      setContact({ name: '', email: '', subject: '', message: '' });
+      showNotice('Your message was saved. We will be in touch.');
+    } catch (error) {
+      showNotice(error instanceof ApiError ? error.message : 'Your message could not be saved.');
+    } finally {
+      setIsContactSubmitting(false);
+    }
+  };
 
   return (
     <main className="grain overflow-hidden bg-[#ececdf] text-[#172520]">
-      {notice && <div data-testid="status-notice" className="fixed bottom-5 left-1/2 z-[60] -translate-x-1/2 rounded-full bg-[#c3e12c] px-5 py-3 text-xs font-bold shadow-xl">{notice}</div>}
+      {notice && <div data-testid="status-notice" className="fixed bottom-5 left-1/2 z-[90] -translate-x-1/2 rounded-full bg-[#c3e12c] px-5 py-3 text-xs font-bold shadow-xl">{notice}</div>}
+      {contentError && <div className="fixed left-1/2 top-[86px] z-30 -translate-x-1/2 rounded-full border border-[#d2b06a] bg-[#fff4cf] px-4 py-2 text-[11px] font-semibold text-[#5a4c24] shadow-lg">{contentError}</div>}
       {selectedTutorial && <VideoModal tutorial={selectedTutorial} onClose={() => setSelectedTutorial(null)} />}
       {selectedProblem && <ProblemModal problem={selectedProblem} onClose={() => setSelectedProblem(null)} />}
       <header className="fixed left-0 right-0 top-0 z-40 border-b border-[#d0d2c3]/70 bg-[#ececdf]/90 backdrop-blur-xl">
@@ -326,7 +390,7 @@ function App() {
           </a>
           <nav className="hidden items-center gap-6 lg:flex" aria-label="Primary navigation">
             {navItems.map(([label, href]) => <a data-testid={`link-nav-${label.toLowerCase().replaceAll(' ', '-')}`} key={label} href={href} className="text-[11px] font-semibold uppercase tracking-[.11em] text-[#4c554d] transition-colors hover:text-[#7a8816]">{label}</a>)}
-            <button data-testid="button-login" onClick={() => showNotice('The member portal is being prepared.')} className="rounded-full border border-[#172520] px-4 py-2 text-[11px] font-bold uppercase tracking-[.12em] transition-colors hover:bg-[#172520] hover:text-[#eef0df]">Login</button>
+            {sessionUser ? <><span className="max-w-[120px] truncate text-[10px] font-semibold uppercase tracking-[.08em] text-[#68731f]">{sessionUser.name}</span><button data-testid="button-logout" onClick={handleLogout} className="rounded-full border border-[#172520] px-4 py-2 text-[11px] font-bold uppercase tracking-[.12em] transition-colors hover:bg-[#172520] hover:text-[#eef0df]">Logout</button></> : <a data-testid="button-login" href="/login" className="rounded-full border border-[#172520] px-4 py-2 text-[11px] font-bold uppercase tracking-[.12em] transition-colors hover:bg-[#172520] hover:text-[#eef0df]">Login</a>}
           </nav>
           <button data-testid="button-mobile-menu" aria-label="Toggle navigation menu" onClick={() => setMenuOpen(!menuOpen)} className="grid h-10 w-10 place-items-center rounded-full border border-[#afb4a4] lg:hidden">
             {menuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -334,7 +398,7 @@ function App() {
         </div>
         {menuOpen && <div className="border-t border-[#d0d2c3] bg-[#ececdf] px-5 pb-5 pt-3 lg:hidden">
           {navItems.map(([label, href]) => <a data-testid={`link-mobile-${label.toLowerCase().replaceAll(' ', '-')}`} onClick={() => setMenuOpen(false)} key={label} href={href} className="block border-b border-[#d0d2c3] py-3 text-xs font-bold uppercase tracking-[.12em]">{label}</a>)}
-          <button data-testid="button-mobile-login" onClick={() => { setMenuOpen(false); showNotice('The member portal is being prepared.'); }} className="mt-4 w-full rounded-full bg-[#172520] py-3 text-xs font-bold uppercase tracking-[.12em] text-[#eef0df]">Login</button>
+          {sessionUser ? <button data-testid="button-mobile-logout" onClick={() => { setMenuOpen(false); void handleLogout(); }} className="mt-4 w-full rounded-full bg-[#172520] py-3 text-xs font-bold uppercase tracking-[.12em] text-[#eef0df]">Logout</button> : <a data-testid="button-mobile-login" href="/login" onClick={() => setMenuOpen(false)} className="mt-4 block w-full rounded-full bg-[#172520] py-3 text-center text-xs font-bold uppercase tracking-[.12em] text-[#eef0df]">Login</a>}
         </div>}
       </header>
 
@@ -458,13 +522,14 @@ function App() {
         <div className="mx-auto grid max-w-[1380px] gap-12 px-5 py-20 md:grid-cols-[1fr_1.1fr] md:px-10 md:py-28">
           <div><p className="font-mono-custom text-[10px] uppercase tracking-[.28em] text-[#59621d]">05 / WATCH & DISCOVER</p><h2 className="font-display mt-4 max-w-lg text-5xl font-semibold leading-[.88] tracking-[-.08em] md:text-7xl">See how a thought becomes a frame.</h2><p className="mt-6 max-w-md text-sm leading-6 text-[#455117]">Three starting points for the next session, chosen across the full Animora practice.</p></div>
           <div className="grid gap-3 sm:grid-cols-3">
-            {[
-              ['2D Creative Demo', 'tut-walk-cycle'],
-              ['3D Visual Demo', 'tut-3d-modeling'],
-              ['VFX Cinematic Demo', 'tut-green-screen'],
+             {[
+               ['2D Creative Demo', tutorialItems.find((tutorial) => tutorial.category === '2D')?.id],
+               ['3D Visual Demo', tutorialItems.find((tutorial) => tutorial.category === '3D')?.id],
+               ['VFX Cinematic Demo', tutorialItems.find((tutorial) => tutorial.category === 'VFX')?.id],
             ].map(([label, tutorialId], index) => {
-              const tutorial = tutorials.find((item) => item.id === tutorialId)!;
-              return <button data-testid={`button-discover-${tutorial.category.toLowerCase()}`} key={label} onClick={() => setSelectedTutorial(tutorial)} className="group relative min-h-[220px] overflow-hidden rounded-2xl bg-[#172520] p-5 text-left text-[#eff0dc] transition-transform hover:-translate-y-1">
+               const tutorial = tutorialItems.find((item) => item.id === tutorialId);
+               if (!tutorial) return null;
+               return <button data-testid={`button-discover-${tutorial.category.toLowerCase()}`} key={label} onClick={() => setSelectedTutorial(tutorial)} className="group relative min-h-[220px] overflow-hidden rounded-2xl bg-[#172520] p-5 text-left text-[#eff0dc] transition-transform hover:-translate-y-1">
                 <img src={tutorial.thumbnail} alt="" className="absolute inset-0 h-full w-full object-cover opacity-25 mix-blend-screen transition-transform duration-700 group-hover:scale-110" />
                 <span className="absolute inset-0 opacity-30 line-grid" />
                 <span className="relative flex h-full flex-col justify-between"><span className="font-mono-custom text-[9px] tracking-[.18em] text-[#c3e12c]">0{index + 1} / {tutorial.category}</span><span><span className="grid h-10 w-10 place-items-center rounded-full bg-[#c3e12c] text-[#172520]"><Play size={13} fill="currentColor" /></span><span className="mt-4 block font-display text-xl leading-none tracking-[-.05em]">{label}</span></span></span>
@@ -485,7 +550,7 @@ function App() {
       <section id="contact" className="bg-[#dedfcf] px-5 py-24 md:px-10 md:py-28">
         <div className="mx-auto grid max-w-[1380px] gap-12 md:grid-cols-[.95fr_1.05fr] md:items-end">
           <div><p className="font-mono-custom text-[10px] uppercase tracking-[.28em] text-[#68731f]">07 / CONTACT</p><h2 className="font-display mt-4 max-w-xl text-5xl font-semibold leading-[.88] tracking-[-.08em] md:text-7xl">Bring a question.<br /><span className="text-[#7d891b]">Leave with a direction.</span></h2></div>
-          <form onSubmit={(event) => { event.preventDefault(); if (email) { showNotice('You are on the Animora list.'); setEmail(''); } }} className="rounded-3xl bg-[#172520] p-7 text-[#eff0dc] md:p-10"><p className="font-display text-2xl tracking-[-.04em]">Get the occasional good thing.</p><p className="mt-2 max-w-sm text-sm leading-6 text-[#adb6a7]">New studies, useful references and a reason to open your animation software.</p><div className="mt-8 flex gap-2 border-b border-[#657267] pb-2"><input data-testid="input-contact-email" aria-label="Email address" required type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="your@email.com" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[#778479]" /><button data-testid="button-contact-submit" type="submit" className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#c3e12c] text-[#172520] transition-transform hover:scale-110"><ArrowRight size={16} /></button></div><p className="mt-5 flex items-center gap-2 font-mono-custom text-[9px] uppercase tracking-[.16em] text-[#829084]"><Check size={13} className="text-[#c3e12c]" /> No noise. Just the good stuff.</p></form>
+           <form onSubmit={submitContact} className="rounded-3xl bg-[#172520] p-7 text-[#eff0dc] md:p-10"><p className="font-display text-2xl tracking-[-.04em]">Bring a question.</p><p className="mt-2 max-w-sm text-sm leading-6 text-[#adb6a7]">Send a note to the studio. Every message is saved to our contact inbox.</p><div className="mt-8 grid gap-5 sm:grid-cols-2"><input data-testid="input-contact-name" aria-label="Name" required value={contact.name} onChange={(event) => setContact({ ...contact, name: event.target.value })} placeholder="Your name" className="border-b border-[#657267] bg-transparent px-0 py-3 text-sm outline-none placeholder:text-[#778479] focus:border-[#c3e12c]" /><input data-testid="input-contact-email" aria-label="Email address" required type="email" value={contact.email} onChange={(event) => setContact({ ...contact, email: event.target.value })} placeholder="your@email.com" className="border-b border-[#657267] bg-transparent px-0 py-3 text-sm outline-none placeholder:text-[#778479] focus:border-[#c3e12c]" /><input data-testid="input-contact-subject" aria-label="Subject" required value={contact.subject} onChange={(event) => setContact({ ...contact, subject: event.target.value })} placeholder="Subject" className="border-b border-[#657267] bg-transparent px-0 py-3 text-sm outline-none placeholder:text-[#778479] focus:border-[#c3e12c] sm:col-span-2" /><textarea data-testid="input-contact-message" aria-label="Message" required value={contact.message} onChange={(event) => setContact({ ...contact, message: event.target.value })} placeholder="Your message" rows={4} className="resize-none border-b border-[#657267] bg-transparent px-0 py-3 text-sm outline-none placeholder:text-[#778479] focus:border-[#c3e12c] sm:col-span-2" /></div><button data-testid="button-contact-submit" disabled={isContactSubmitting} type="submit" className="mt-7 flex items-center gap-3 rounded-full bg-[#c3e12c] px-5 py-3 text-xs font-bold uppercase tracking-[.11em] text-[#172520] disabled:opacity-60">{isContactSubmitting ? 'Saving...' : 'Send message'} <ArrowRight size={16} /></button><p className="mt-5 flex items-center gap-2 font-mono-custom text-[9px] uppercase tracking-[.16em] text-[#829084]"><Check size={13} className="text-[#c3e12c]" /> No fake success. Only confirmed saves.</p></form>
         </div>
       </section>
 
