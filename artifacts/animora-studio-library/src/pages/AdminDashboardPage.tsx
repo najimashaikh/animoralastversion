@@ -49,11 +49,13 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     let active = true;
-    const supabaseMessagesPromise = supabase
-      .from('contact_messages')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .then(({ data }) => (data as AdminRow[]) ?? [])
+    const supabaseMessagesPromise = Promise.resolve(
+      supabase
+        .from('contact_messages')
+        .select('*')
+        .order('created_at', { ascending: false })
+    )
+      .then((res) => ((res as { data?: AdminRow[] }).data as AdminRow[]) ?? [])
       .catch(() => [] as AdminRow[]);
 
     Promise.all([
