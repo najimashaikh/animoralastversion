@@ -283,15 +283,23 @@ function App() {
   };
   const submitContact = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!contact.name.trim() || !contact.email.trim() || !contact.subject.trim() || !contact.message.trim()) {
+      showNotice('Please complete all fields before sending.');
+      return;
+    }
     setIsContactSubmitting(true);
     try {
-      const { formsubmitSent } = await submitContactForm(contact);
-      setContact({ name: '', email: '', subject: '', message: '' });
-      showNotice(
-        formsubmitSent
-          ? 'Message sent! Email delivered to najimashaikh267@gmail.com & saved.'
-          : 'Your message was saved to our contact inbox.'
-      );
+      const { formsubmitSent, saved } = await submitContactForm(contact);
+      if (saved) {
+        setContact({ name: '', email: '', subject: '', message: '' });
+        showNotice(
+          formsubmitSent
+            ? 'Thank you! Your message was delivered to our inbox & email.'
+            : 'Thank you! Your message was saved directly to our contact inbox.'
+        );
+      } else {
+        showNotice('Your message could not be saved. Please try again.');
+      }
     } catch (error) {
       showNotice(error instanceof Error ? error.message : 'Your message could not be saved.');
     } finally {

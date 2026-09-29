@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { ArrowLeft, LogOut, ShieldCheck, Users } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import { ApiError, apiFetch } from '@/lib/api';
+import { supabase } from '@/lib/supabase';
 
 type AdminUser = {
   id: number;
@@ -48,21 +49,46 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     let active = true;
+    const supabaseMessagesPromise = supabase
+      .from('contact_messages')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .then(({ data }) => (data as AdminRow[]) ?? [])
+      .catch(() => [] as AdminRow[]);
+
     Promise.all([
       apiFetch<AdminResponse>('/admin/users'),
       apiFetch<DashboardResponse>('/admin/dashboard'),
-      apiFetch<{ 'contact-messages': AdminRow[] }>('/admin/contact-messages'),
+      apiFetch<{ 'contact-messages': AdminRow[] }>('/admin/contact-messages').catch(() => ({ 'contact-messages': [] })),
       apiFetch<{ projects: AdminRow[] }>('/admin/projects'),
       apiFetch<{ documents: AdminRow[] }>('/admin/documents'),
       apiFetch<{ courses: AdminRow[] }>('/admin/courses'),
       apiFetch<{ tutorials: AdminRow[] }>('/admin/tutorials'),
       apiFetch<{ problems: AdminRow[] }>('/admin/problems'),
-    ]).then(([userResponse, dashboardResponse, messagesResponse, projectsResponse, documentsResponse, coursesResponse, tutorialsResponse, problemsResponse]) => {
+      supabaseMessagesPromise,
+    ]).then(([userResponse, dashboardResponse, messagesResponse, projectsResponse, documentsResponse, coursesResponse, tutorialsResponse, problemsResponse, supabaseMessages]) => {
       if (!active) return;
       setUsers(userResponse.users);
-      setCounts(dashboardResponse.counts);
+
+      // Merge local and Supabase contact messages without duplicates
+      const localMsgs = messagesResponse['contact-messages'] || [];
+      const seen = new Set<string>();
+      const mergedContactMsgs: AdminRow[] = [];
+      for (const m of [...supabaseMessages, ...localMsgs]) {
+        const key = `${m.email ?? ''}|${m.created_at ?? ''}|${m.message ?? ''}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          mergedContactMsgs.push(m);
+        }
+      }
+
+      setCounts({
+        ...dashboardResponse.counts,
+        contact_messages: mergedContactMsgs.length || dashboardResponse.counts.contact_messages || 0,
+      });
+
       setCollections({
-        'contact-messages': messagesResponse['contact-messages'],
+        'contact-messages': mergedContactMsgs,
         projects: projectsResponse.projects,
         documents: documentsResponse.documents,
         courses: coursesResponse.courses,
