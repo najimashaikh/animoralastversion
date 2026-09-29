@@ -206,63 +206,77 @@ export async function submitContactForm(contact: {
   subject: string;
   message: string;
 }): Promise<{ formsubmitSent: boolean; saved: boolean }> {
-  let formsubmitSent = false;
-  let saved = false;
-
-  // 1. Send email notification via FormSubmit.co to najimashaikh267@gmail.com
-  try {
-    const formSubmitRes = await fetch(`https://formsubmit.co/ajax/${FORMSUBMIT_EMAIL}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify({
+  // 1. Parallel Task: Save to Supabase (primary fast store)
+  const supabasePromise = (async () => {
+    try {
+      const { error: supabaseError } = await supabase.from('contact_messages').insert({
         name: contact.name,
         email: contact.email,
         subject: contact.subject,
         message: contact.message,
-        _subject: `[Animora Studio] New inquiry: ${contact.subject || 'Message from ' + contact.name}`,
-        _template: 'table',
-        _captcha: 'false',
-      }),
-    });
-
-    if (formSubmitRes.ok) {
-      formsubmitSent = true;
+        status: 'new',
+      });
+      return !supabaseError;
+    } catch (err) {
+      console.warn('Supabase contact save error:', err);
+      return false;
     }
-  } catch (err) {
-    console.warn('FormSubmit notification error (non-fatal):', err);
-  }
+  })();
 
-  // 2. Save message into Supabase contact_messages table
-  try {
-    const { error: supabaseError } = await supabase.from('contact_messages').insert({
-      name: contact.name,
-      email: contact.email,
-      subject: contact.subject,
-      message: contact.message,
-      status: 'new',
-    });
+  // 2. Parallel Task: Send email via FormSubmit with 3.5s timeout protection
+  const formSubmitPromise = (async () => {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3500);
 
-    if (!supabaseError) {
-      saved = true;
+      const formSubmitRes = await fetch(`https://formsubmit.co/ajax/${FORMSUBMIT_EMAIL}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          name: contact.name,
+          email: contact.email,
+          subject: contact.subject,
+          message: contact.message,
+          _subject: `[Animora Studio] New inquiry: ${contact.subject || 'Message from ' + contact.name}`,
+          _template: 'table',
+          _captcha: 'false',
+        }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+      return formSubmitRes.ok;
+    } catch (err) {
+      console.warn('FormSubmit notification error (non-fatal):', err);
+      return false;
     }
-  } catch (err) {
-    console.warn('Supabase contact save error:', err);
-  }
+  })();
 
-  // 3. Save into local DB for admin portal
-  try {
-    await apiFetch('/contact-messages', {
-      method: 'POST',
-      body: JSON.stringify(contact),
-    });
-    saved = true;
-  } catch (err) {
-    console.warn('Local contact save error:', err);
-  }
+  // 3. Parallel Task: Sync to local database for admin portal
+  const localApiPromise = (async () => {
+    try {
+      await apiFetch('/contact-messages', {
+        method: 'POST',
+        body: JSON.stringify(contact),
+      });
+      return true;
+    } catch (err) {
+      console.warn('Local contact save error:', err);
+      return false;
+    }
+  })();
 
+  // Execute all 3 in parallel without sequential blocking
+  const [supabaseSaved, formsubmitSent, localSaved] = await Promise.all([
+    supabasePromise,
+    formSubmitPromise,
+    localApiPromise,
+  ]);
+
+  const saved = supabaseSaved || localSaved;
   if (!saved && !formsubmitSent) {
     throw new Error('Could not submit message. Please try again.');
   }
